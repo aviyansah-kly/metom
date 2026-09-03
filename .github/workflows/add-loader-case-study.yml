@@ -1,0 +1,40 @@
+name: Add loader and case study link
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-loader-case-study.yml'
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update homepage loader and project link
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text()
+          css='''\n/* Opening loader */\n.site-loader{position:fixed;inset:0;z-index:9999;background:#171817;color:#fff;display:grid;place-items:center;transition:opacity .55s ease,visibility .55s ease}.site-loader.is-hidden{opacity:0;visibility:hidden}.site-loader-inner{width:min(420px,72vw);text-align:center}.site-loader-mark{width:74px;height:58px;margin:0 auto 26px;position:relative}.site-loader-mark:before,.site-loader-mark:after{content:"";position:absolute;left:50%;transform:translateX(-50%) rotate(30deg) skewX(-30deg);width:52px;height:32px;border:2px solid #c77742}.site-loader-mark:after{top:18px;border-color:#d9d1c5}.site-loader-word{font-size:15px;letter-spacing:.08em;text-transform:lowercase;margin-bottom:18px}.site-loader-line{height:1px;background:rgba(255,255,255,.18);overflow:hidden}.site-loader-line span{display:block;height:100%;width:40%;background:#c77742;animation:siteLoading 1.1s ease-in-out infinite}@keyframes siteLoading{0%{transform:translateX(-110%)}100%{transform:translateX(360%)}}.project{display:block}.project:focus-visible{outline:2px solid #c77742;outline-offset:3px}@media(prefers-reduced-motion:reduce){.site-loader-line span{animation:none}}\n'''
+          if '/* Opening loader */' not in s:
+              s=s.replace('</style>',css+'\n</style>',1)
+          loader='''<div class="site-loader" id="site-loader" aria-hidden="true"><div class="site-loader-inner"><div class="site-loader-mark"></div><div class="site-loader-word">metom design</div><div class="site-loader-line"><span></span></div></div></div>'''
+          if 'id="site-loader"' not in s:
+              s=s.replace('<body>','<body>\n'+loader,1)
+          s=s.replace('<article class="project large">','<a class="project large" href="projects/residential-interior/" aria-label="Lihat case study Residential Interior">',1)
+          s=s.replace('</article><div class="stack">','</a><div class="stack">',1)
+          js='''\nwindow.addEventListener('load',function(){setTimeout(function(){var l=document.getElementById('site-loader');if(l)l.classList.add('is-hidden')},550)});\n'''
+          if "getElementById('site-loader')" not in s:
+              s=s.replace('<script>','<script>'+js,1)
+          p.write_text(s)
+          PY
+      - name: Remove one-time workflow and commit
+        run: |
+          rm .github/workflows/add-loader-case-study.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/add-loader-case-study.yml
+          git commit -m "feat: add opening loader and portfolio case study link"
+          git push
