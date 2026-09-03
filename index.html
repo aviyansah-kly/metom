@@ -29,7 +29,9 @@ header{position:fixed;z-index:30;inset:0 0 auto;background:rgba(243,241,236,.94)
 .insights{padding:108px 0;background:var(--paper)}.insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}.insight{border-top:1px solid var(--line);padding-top:18px}.insight .tag{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.insight h3{font-size:22px;margin:12px 0 8px}.insight p{font-size:14px}.cta{padding:104px 0;background:#171817;color:#fff}.cta p{color:#bcbeb9}.cta h2{max-width:750px}.cta-link{margin-top:24px;border-color:#fff;background:#fff;color:#171817}.cta-link:hover{background:transparent;color:#fff}
 .wa-float{position:fixed;right:26px;bottom:26px;z-index:50;display:flex;align-items:center;background:#25D366;color:#fff;border-radius:999px;font-weight:400;line-height:1;min-height:64px;padding:13px 22px 13px 13px;gap:12px;box-shadow:0 12px 34px rgba(0,0,0,.22),0 0 0 1px rgba(255,255,255,.10) inset;transition:transform .25s,box-shadow .25s}.wa-float:hover{transform:translateY(-4px) scale(1.015);box-shadow:0 18px 42px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.16) inset}.wa-float:before,.wa-float:after{content:"";position:absolute;inset:-9px;border:2px solid rgba(37,211,102,.48);border-radius:999px;animation:waPulse 2.1s cubic-bezier(.2,.7,.2,1) infinite;pointer-events:none}.wa-float:after{inset:-17px;border-width:1.5px;border-color:rgba(37,211,102,.28);animation-delay:1.05s}.wa-icon-wrap{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14);flex:0 0 auto;box-shadow:0 0 0 1px rgba(255,255,255,.18) inset}.wa-icon-wrap svg{width:23px;height:23px;display:block;fill:#fff}.wa-label{white-space:nowrap;font-size:14px;letter-spacing:-.01em}@keyframes waPulse{0%{transform:scale(.92);opacity:.78}65%{opacity:.28}100%{transform:scale(1.20);opacity:0}}
 footer{background:#171817;color:#d6d7d2;padding:34px 0 28px;border-top:1px solid rgba(255,255,255,.16)}.footer-grid{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:50px}.footer-logo{display:block;width:168px;height:auto;opacity:.9}.footer-logo .word,.footer-logo .tagline{fill:#fff}.footer-logo .base{fill:#fff}.footer-logo .walls{fill:#d6d6d2}.footer-logo .roof{stroke:#fff}footer h4{font-size:10px;font-weight:400;text-transform:uppercase;letter-spacing:.14em;color:#7f827c}footer p,footer a{font-size:12px;color:#b7b9b3}.foot{margin-top:40px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12);font-size:10px;color:#73766f;display:flex;justify-content:space-between}
-@media(prefers-reduced-motion:reduce){.wa-float:before,.wa-float:after,.logo-track{animation:none}.logo-track{flex-wrap:wrap;width:auto}.logo-marquee{mask-image:none;-webkit-mask-image:none}}
+/* Scroll reveal motion */
+.reveal{opacity:0;transform:translate3d(0,28px,0);transition:opacity .75s cubic-bezier(.2,.65,.25,1),transform .75s cubic-bezier(.2,.65,.25,1);will-change:opacity,transform}.reveal.reveal-left{transform:translate3d(-24px,0,0)}.reveal.reveal-right{transform:translate3d(24px,0,0)}.reveal.reveal-scale{transform:translate3d(0,18px,0) scale(.985)}.reveal.is-visible{opacity:1;transform:translate3d(0,0,0) scale(1)}.reveal[data-delay="1"]{transition-delay:.08s}.reveal[data-delay="2"]{transition-delay:.16s}.reveal[data-delay="3"]{transition-delay:.24s}.reveal[data-delay="4"]{transition-delay:.32s}.reveal[data-delay="5"]{transition-delay:.40s}.reveal[data-delay="6"]{transition-delay:.48s}.reveal-img{overflow:hidden}.reveal-img img{transform:scale(1.045);transition:transform 1.1s cubic-bezier(.2,.65,.25,1)}.reveal-img.is-visible img{transform:scale(1)}
+@media(prefers-reduced-motion:reduce){.wa-float:before,.wa-float:after,.logo-track{animation:none}.logo-track{flex-wrap:wrap;width:auto}.logo-marquee{mask-image:none;-webkit-mask-image:none}.reveal,.reveal.reveal-left,.reveal.reveal-right,.reveal.reveal-scale{opacity:1!important;transform:none!important;transition:none!important}.reveal-img img{transform:none!important;transition:none!important}}
 @media(max-width:980px){:root{--pad:26px}.navlinks{display:none}.logo{width:200px}.intro-grid,.section-title,.seo-grid,.process-grid,.cta-grid{grid-template-columns:1fr;gap:24px}.project-grid,.studio-grid{grid-template-columns:1fr}.cap-row{grid-template-columns:46px 1fr 220px;gap:22px}.cap-row h3,.cap-row p{grid-column:2}.cap-thumb{grid-column:3;grid-row:1 / span 2;height:150px}.studio-image{min-height:480px}.footer-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:640px){:root{--pad:18px}.nav{height:70px}.logo{width:180px;max-width:62vw}.enquire{font-size:11px;padding:10px 12px}.hero{padding-top:70px}.hero-media{inset:70px 0 0}.hero-copy{min-height:calc(100vh - 70px);padding-bottom:30px}h1{font-size:40px}h2{font-size:31px}.hero-copy p{font-size:14px}.hero-meta{margin-top:38px;display:block}.hero-meta span{display:block;margin-top:6px}.intro,.projects,.process,.insights{padding:78px 0}.capability,.seo{padding:76px 0}.stats,.service-cards,.insights-grid,.footer-grid{grid-template-columns:1fr}.service-card:nth-child(even){padding-left:0;border-left:0}.cap-row{grid-template-columns:36px 1fr;padding:22px 0}.cap-row h3,.cap-row p,.cap-thumb{grid-column:2}.cap-thumb{grid-row:auto;height:190px;margin-top:8px}.project.large{min-height:500px}.project{min-height:360px}.step{grid-template-columns:42px 1fr}.step p{grid-column:2}.studio-copy{padding:38px 22px}.client-marquee{padding:46px 0}.client-marquee-head{display:block;margin-bottom:24px}.client-marquee-head h2{font-size:24px}.client-logo{width:154px;height:78px;padding:14px 18px}.client-logo img{max-height:44px}.foot{display:block}.foot span{display:block;margin-top:5px}.wa-float{right:18px;bottom:18px;width:62px;height:62px;min-height:62px;padding:0;justify-content:center}.wa-float:before{inset:-8px}.wa-float:after{inset:-15px}.wa-label{display:none}.wa-icon-wrap{width:42px;height:42px}.wa-icon-wrap svg{width:25px;height:25px}}
 </style>
@@ -50,5 +52,46 @@ footer{background:#171817;color:#d6d7d2;padding:34px 0 28px;border-top:1px solid
 </main>
 <a class="wa-float" href="https://api.whatsapp.com/send?phone=6281231131796&text=Halo%20Metom%20Design%2C%20saya%20tertarik%20untuk%20konsultasi%20desain%20interior.%20Bisa%20dibantu%20informasi%20proses%20dan%20estimasi%20awalnya%3F" target="_blank" rel="noopener" aria-label="Konsultasi Metom Design via WhatsApp"><span class="wa-icon-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.208-.242-.58-.487-.501-.669-.51-.173-.009-.371-.011-.57-.011-.198 0-.52.074-.792.371-.272.297-1.04 1.016-1.04 2.479s1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.89-9.884a9.82 9.82 0 0 1 7.021 2.91 9.825 9.825 0 0 1 2.9 7.01c-.003 5.45-4.437 9.884-9.887 9.884m8.413-18.297A11.815 11.815 0 0 0 12.055 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.689 1.448h.005c6.56 0 11.893-5.334 11.896-11.893a11.821 11.821 0 0 0-3.489-8.413Z"/></svg></span><span class="wa-label">Konsultasi via WhatsApp</span></a>
 <footer><div class="wrap"><div class="footer-grid"><div><svg class="footer-logo" viewBox="0 0 860 220" role="img" aria-label="Metom Design Interior Design & Build"><g transform="translate(12 10)"><path class="roof" d="M34 78 122 28 210 78 122 128Z" fill="none" stroke="#fff" stroke-width="20"/><path class="base" d="M34 134 122 88 210 134 122 182Z" fill="#fff"/><path class="walls" d="M77 112 122 88 122 143 77 166Z" fill="#d6d6d2"/><path class="walls" d="M122 88 167 112 167 166 122 143Z" fill="#d6d6d2"/></g><g transform="translate(245 65)"><text class="word" x="0" y="54" font-family="Helvetica Neue,Arial,sans-serif" font-size="72" font-weight="400" letter-spacing="-3" fill="#fff">metom design</text><text class="tagline" x="4" y="102" font-family="Helvetica Neue,Arial,sans-serif" font-size="21" font-weight="500" letter-spacing="8" fill="#fff">INTERIOR DESIGN &amp; BUILD</text></g></svg><p>Interior Design · Build · Malang</p></div><div><h4>Kontak</h4><p>+62 812 3113 1796<br>metomdesign@gmail.com<br>Jl. Tenes Meja No. 23, Tasikmadu<br>Lowokwaru, Malang 65142</p></div><div><h4>Navigasi</h4><p><a href="#proyek">Proyek</a><br><a href="#layanan">Layanan</a><br><a href="#proses">Proses</a><br><a href="#studio">Studio</a><br><a href="#wawasan">Wawasan</a></p></div></div><div class="foot"><span>© 2026 Metom Design</span><span>Interior Design & Build · Malang</span></div></div></footer>
+<script>
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const items=[];
+  const add=(selector,mode='')=>document.querySelectorAll(selector).forEach((el,i)=>{el.classList.add('reveal');if(mode)el.classList.add(mode);el.dataset.delay=(i%6)+1;items.push(el)});
+
+  add('.hero-copy > *');
+  document.querySelector('.hero-media')?.classList.add('reveal','reveal-scale','reveal-img');
+  if(document.querySelector('.hero-media')) items.push(document.querySelector('.hero-media'));
+  add('.intro .kicker','reveal-left');
+  add('.intro-copy > h2, .intro-copy > p');
+  add('.stat');
+  add('.cap-head > *');
+  add('.cap-row');
+  document.querySelectorAll('.cap-thumb').forEach(el=>el.classList.add('reveal-img'));
+  add('.projects .section-title > *');
+  add('.project','reveal-scale');
+  document.querySelectorAll('.project').forEach(el=>el.classList.add('reveal-img'));
+  add('.seo-grid > .kicker','reveal-left');
+  add('.seo-grid > div:last-child > h2');
+  add('.service-card');
+  add('.process-grid > div:first-child > *');
+  add('.step');
+  add('.studio-image','reveal-left');
+  document.querySelector('.studio-image')?.classList.add('reveal-img');
+  add('.studio-copy > *','reveal-right');
+  add('.client-marquee-head > *');
+  add('.insights .section-title > *');
+  add('.insight');
+  add('.cta-grid > *');
+  add('footer .footer-grid > *');
+  add('footer .foot > *');
+
+  const observer=new IntersectionObserver((entries,obs)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add('is-visible');obs.unobserve(entry.target)}
+    })
+  },{threshold:.12,rootMargin:'0px 0px -7% 0px'});
+  items.forEach(el=>observer.observe(el));
+})();
+</script>
 </body>
 </html>
