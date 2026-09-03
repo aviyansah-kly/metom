@@ -14,39 +14,52 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Replace client wordmarks with logo marquee
+      - name: Fix CTAs and use uploaded client logos
         run: |
           python - <<'PY'
           from pathlib import Path
+          import base64, re
+
+          asset = Path('assets/clients/client-logos.png')
+          raw = asset.read_bytes()
+          if raw.startswith(b'iVBOR'):
+              asset.write_bytes(base64.b64decode(raw))
+
           p = Path('index.html')
           s = p.read_text()
 
-          css_start = s.index('.client-marquee{')
-          css_end = s.index('.insights{', css_start)
-          new_css = '''.client-marquee{padding:58px 0 62px;background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden}.client-marquee-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:34px}.client-marquee-head h2{font-size:28px;margin:8px 0 0}.client-marquee-head p{font-size:13px;margin:0;max-width:460px}.logo-marquee{position:relative;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%)}.logo-track{display:flex;width:max-content;align-items:center;gap:64px;padding:5px 0;animation:clientScroll 28s linear infinite}.logo-marquee:hover .logo-track{animation-play-state:paused}.client-logo{width:170px;height:70px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:transparent;border:0;padding:0}.client-logo img{display:block;width:auto;height:auto;max-width:160px;max-height:48px;object-fit:contain;filter:grayscale(1);opacity:.64;transition:filter .3s ease,opacity .3s ease,transform .3s ease}.client-logo:hover img{filter:grayscale(0);opacity:1;transform:scale(1.04)}@keyframes clientScroll{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-50% - 32px),0,0)}}\n'''
-          s = s[:css_start] + new_css + s[css_end:]
+          css = '''
+/* Safari-safe CTA + uploaded client logos */
+.enquire,.hero-cta,.cta-link{border-radius:999px!important;background:#171817!important;color:#fff!important;border:1px solid #171817!important;padding:13px 20px!important;gap:9px!important;box-shadow:none!important}
+.enquire:hover,.hero-cta:hover,.cta-link:hover{background:#2b2b29!important;color:#fff!important;border-color:#2b2b29!important;transform:translateY(-1px)}
+.hero-cta,.cta-link{border-color:rgba(255,255,255,.72)!important}
+.cta-wa-icon{width:17px;height:17px;display:block;fill:currentColor;flex:0 0 auto}
+.logo-marquee{position:relative;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 8%,#000 92%,transparent 100%)}
+.logo-track{display:flex;width:max-content;align-items:center;gap:72px;padding:8px 0;animation:clientScrollLocal 32s linear infinite;will-change:transform}
+.logo-marquee:hover .logo-track{animation-play-state:paused}
+.client-logo-strip{display:block;width:1440px;height:180px;object-fit:contain;flex:0 0 1440px;filter:grayscale(1);opacity:.72;transition:filter .3s ease,opacity .3s ease}
+.logo-marquee:hover .client-logo-strip{filter:grayscale(0);opacity:1}
+@keyframes clientScrollLocal{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-50% - 36px),0,0)}}
+@media(max-width:640px){.enquire{padding:11px 14px!important}.cta-wa-icon{width:16px;height:16px}.client-logo-strip{width:1080px;height:150px;flex-basis:1080px}.logo-track{gap:52px}}
+'''
+          if '/* Safari-safe CTA + uploaded client logos */' not in s:
+              s = s.replace('</style>', css + '\n</style>', 1)
+
+          wa = '<svg class="cta-wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.208-.242-.58-.487-.501-.669-.51-.173-.009-.371-.011-.57-.011-.198 0-.52.074-.792.371-.272.297-1.04 1.016-1.04 2.479s1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.89-9.884a9.82 9.82 0 0 1 7.021 2.91 9.825 9.825 0 0 1 2.9 7.01c-.003 5.45-4.437 9.884-9.887 9.884m8.413-18.297A11.815 11.815 0 0 0 12.055 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.689 1.448h.005c6.56 0 11.893-5.334 11.896-11.893a11.821 11.821 0 0 0-3.489-8.413Z"/></svg>'
+          s = re.sub(r'(<a class="enquire"[^>]*>).*?(</a>)', lambda m: m.group(1)+wa+'Konsultasi Gratis'+m.group(2), s, count=1, flags=re.S)
+          s = re.sub(r'(<a class="hero-cta"[^>]*>).*?(</a>)', lambda m: m.group(1)+wa+'Konsultasi Proyek'+m.group(2), s, count=1, flags=re.S)
+          s = re.sub(r'(<a class="cta-link"[^>]*>).*?(</a>)', lambda m: m.group(1)+wa+'Mulai Konsultasi via WhatsApp'+m.group(2), s, count=1, flags=re.S)
 
           html_start = s.index('<section class="client-marquee"')
           html_end = s.index('<section class="insights"', html_start)
-          clients = [
-            ('alizzah-batu.sch.id', 'Al Izzah Leadership School'),
-            ('malangstrudel.com', 'Malang Strudel'),
-            ('charis.sch.id', 'Charis National Academy'),
-            ('aia-financial.co.id', 'AIA Malang'),
-            ('surabayapatata.com', 'Surabaya Patata'),
-            ('mncfinance.com', 'MNC Finance Malang'),
-          ]
-          logos = ''.join(f'<div class="client-logo"><img src="https://logo.clearbit.com/{domain}?size=256" alt="{name}" loading="lazy"></div>' for domain,name in clients * 2)
-          new_html = f'''<section class="client-marquee" aria-labelledby="client-title"><div class="wrap client-marquee-head"><div><div class="kicker">Klien</div><h2 id="client-title">Pernah dipercaya berbagai brand dan institusi.</h2></div><p>Beberapa klien yang pernah bekerja sama dengan Metom Design.</p></div><div class="logo-marquee" aria-label="Logo klien Metom Design"><div class="logo-track">{logos}</div></div></section>\n'''
+          new_html = '''<section class="client-marquee" aria-labelledby="client-title"><div class="wrap client-marquee-head"><div><div class="kicker">Klien</div><h2 id="client-title">Pernah dipercaya berbagai brand dan institusi.</h2></div><p>Beberapa klien yang pernah bekerja sama dengan Metom Design.</p></div><div class="logo-marquee" aria-label="Logo klien Metom Design"><div class="logo-track"><img class="client-logo-strip" src="assets/clients/client-logos.png" alt="AIA, Surabaya Patata, Charis, MNC Finance, Al Izzah Leadership School, dan Malang Strudel"><img class="client-logo-strip" src="assets/clients/client-logos.png" alt="" aria-hidden="true"></div></div></section>\n'''
           s = s[:html_start] + new_html + s[html_end:]
-
-          s = s.replace('.client-logo{width:154px;height:78px;padding:14px 18px}.client-logo img{max-height:44px}', '.client-logo{width:142px;height:64px}.client-logo img{max-width:132px;max-height:42px}.logo-track{gap:42px}')
           p.write_text(s)
           PY
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git diff --cached --quiet || git commit -m "fix: show client logos in marquee"
+          git add index.html assets/clients/client-logos.png
+          git diff --cached --quiet || git commit -m "fix: Safari-safe WhatsApp CTAs and uploaded client logos"
           git push
