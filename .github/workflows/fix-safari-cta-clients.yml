@@ -11,8 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Decode local client logo asset and update UI
-        shell: python
+        shell: bash
         run: |
+          python - <<'PY'
           import base64, re, pathlib
           asset = pathlib.Path('assets/clients/client-logos.png')
           raw = asset.read_bytes()
@@ -21,9 +22,7 @@ jobs:
 
           p = pathlib.Path('index.html')
           s = p.read_text()
-
-          # Add/override Safari-safe CTA styling and local logo marquee styling.
-          css = r'''
+          css = '''
 /* Safari-safe CTA + local client logo marquee */
 .enquire,.hero-cta,.cta-link{border-radius:999px!important;background:#171817!important;color:#fff!important;border:1px solid #171817!important;padding:13px 20px!important;gap:9px!important;box-shadow:none!important}
 .enquire:hover,.hero-cta:hover,.cta-link:hover{background:#2b2b29!important;color:#fff!important;border-color:#2b2b29!important;transform:translateY(-1px)}
@@ -39,21 +38,14 @@ jobs:
 @media(prefers-reduced-motion:reduce){.logo-track{animation:none!important;transform:none!important}}
 '''
           s = s.replace('</style>', css + '\n</style>', 1)
-
           wa = '<svg class="cta-wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.198.297-.767.966-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.208-.242-.58-.487-.501-.669-.51-.173-.009-.371-.011-.57-.011-.198 0-.52.074-.792.371-.272.297-1.04 1.016-1.04 2.479s1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.89-9.884a9.82 9.82 0 0 1 7.021 2.91 9.825 9.825 0 0 1 2.9 7.01c-.003 5.45-4.437 9.884-9.887 9.884m8.413-18.297A11.815 11.815 0 0 0 12.055 0C5.495 0 .16 5.333.157 11.892c0 2.096.547 4.14 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.689 1.448h.005c6.56 0 11.893-5.334 11.896-11.893a11.821 11.821 0 0 0-3.489-8.413Z"/></svg>'
-
-          def button(label, cls):
-              pattern = rf'(<a class="{re.escape(cls)}"[^>]*>)(.*?)(</a>)'
-              return re.sub(pattern, lambda m: m.group(1)+wa+label+m.group(3), s, count=1, flags=re.S)
-
           s = re.sub(r'(<a class="enquire"[^>]*>).*?(</a>)', lambda m: m.group(1)+wa+'Konsultasi Gratis'+m.group(2), s, count=1, flags=re.S)
           s = re.sub(r'(<a class="hero-cta"[^>]*>).*?(</a>)', lambda m: m.group(1)+wa+'Konsultasi Proyek'+m.group(2), s, count=1, flags=re.S)
           s = re.sub(r'(<a class="cta-link"[^>]*>).*?(</a>)', lambda m: m.group(1)+wa+'Mulai Konsultasi via WhatsApp'+m.group(2), s, count=1, flags=re.S)
-
           marquee = '<div class="logo-marquee" aria-label="Logo klien Metom Design"><div class="logo-track"><img class="client-logo-strip" src="assets/clients/client-logos.png" alt="AIA, Surabaya Patata, Charis, MNC Finance, Al Izzah Leadership School, dan Malang Strudel"><img class="client-logo-strip" src="assets/clients/client-logos.png" alt="" aria-hidden="true"></div></div>'
           s = re.sub(r'<div class="logo-marquee">.*?</div></div></section>', marquee + '</section>', s, count=1, flags=re.S)
-
           p.write_text(s)
+          PY
       - name: Remove one-time workflow
         run: rm .github/workflows/fix-safari-cta-clients.yml
       - name: Commit changes
