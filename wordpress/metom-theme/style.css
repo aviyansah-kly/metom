@@ -1,0 +1,17 @@
+/*
+Theme Name: Metom Design
+Theme URI: https://metom.id/
+Author: Metom Design
+Description: Lightweight custom WordPress theme for Metom Design, based on the approved HTML prototype.
+Version: 0.1.0
+Text Domain: metom
+*/
+
+:root {
+  --metom-bg: #f3f1ec;
+  --metom-paper: #f8f7f3;
+  --metom-ink: #171817;
+  --metom-muted: #6f716d;
+  --metom-line: rgba(23,24,23,.18);
+  --metom-max: 1440px;
+}
