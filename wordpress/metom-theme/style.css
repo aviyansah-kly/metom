@@ -3,7 +3,7 @@ Theme Name: Metom Design
 Theme URI: https://metom.id/
 Author: Metom Design
 Description: Lightweight custom WordPress theme for Metom Design, based on the approved HTML prototype.
-Version: 0.1.0
+Version: 0.2.0
 Text Domain: metom
 */
 
@@ -14,4 +14,8 @@ Text Domain: metom
   --metom-muted: #6f716d;
   --metom-line: rgba(23,24,23,.18);
   --metom-max: 1440px;
+  --metom-pad: 42px;
 }
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--metom-bg);color:var(--metom-ink);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;line-height:1.6}img{max-width:100%;height:auto;display:block}a{color:inherit;text-decoration:none}.metom-shell{max-width:var(--metom-max);margin:auto;padding-left:var(--metom-pad);padding-right:var(--metom-pad)}.metom-kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--metom-muted);margin:0 0 12px}.metom-hero{min-height:88vh;display:flex;align-items:flex-end;background:#191919;color:#fff;padding:150px 0 60px}.metom-hero h1,.metom-section h1,.metom-section h2,.metom-cta h2{font-weight:400;letter-spacing:-.04em;line-height:1.02}.metom-hero h1{font-size:clamp(44px,6vw,78px);max-width:900px;margin:0 0 22px}.metom-hero p{max-width:650px;color:rgba(255,255,255,.76)}.metom-button{display:inline-flex;margin-top:22px;padding:14px 20px;border-radius:999px;background:var(--metom-ink);color:#fff;border:1px solid currentColor}.metom-section,.metom-clients{padding:96px 0}.metom-section--alt,.metom-clients{background:var(--metom-paper)}.metom-section__head{display:grid;grid-template-columns:.6fr 1.4fr;gap:70px;align-items:end;margin-bottom:38px}.metom-section__head h2,.metom-section h2{font-size:clamp(32px,4vw,52px);margin:0}.metom-two-col{display:grid;grid-template-columns:1fr 1fr;gap:70px}.metom-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.metom-card-grid--projects .metom-card:first-child{grid-column:span 2}.metom-card,.metom-service-card{background:#fff;border:1px solid var(--metom-line)}.metom-card img{width:100%;aspect-ratio:4/3;object-fit:cover}.metom-card__body,.metom-service-card{padding:22px}.metom-card h3,.metom-card h2,.metom-service-card h3,.metom-service-card h2{margin:0 0 10px;font-weight:400;letter-spacing:-.03em}.metom-card p,.metom-service-card p{color:var(--metom-muted)}.metom-client-list{display:flex;gap:36px;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--metom-line);color:#555}.metom-process{display:grid;grid-template-columns:repeat(3,1fr);gap:0;list-style:none;padding:0;margin:36px 0 0;border-top:1px solid var(--metom-line)}.metom-process li{padding:20px 12px 20px 0;border-bottom:1px solid var(--metom-line)}.metom-cta{padding:96px 0;background:var(--metom-ink);color:#fff}.metom-cta p{color:#bbb;max-width:650px}.metom-archive{padding-top:70px}
+@media(max-width:900px){:root{--metom-pad:26px}.metom-section__head,.metom-two-col{grid-template-columns:1fr;gap:20px}.metom-card-grid{grid-template-columns:1fr 1fr}.metom-card-grid--projects .metom-card:first-child{grid-column:span 2}.metom-process{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){:root{--metom-pad:18px}.metom-hero{min-height:78vh;padding-top:120px}.metom-hero h1{font-size:42px}.metom-section,.metom-clients,.metom-cta{padding:68px 0}.metom-card-grid{grid-template-columns:1fr}.metom-card-grid--projects .metom-card:first-child{grid-column:auto}.metom-process{grid-template-columns:1fr}.metom-client-list{gap:20px}}
