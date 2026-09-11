@@ -1,6 +1,12 @@
 <?php
 get_header();
 
+$clients = new WP_Query([
+    'post_type' => 'metom_client',
+    'posts_per_page' => 12,
+    'post_status' => 'publish',
+    'orderby' => ['menu_order'=>'ASC','title'=>'ASC'],
+]);
 $projects = new WP_Query([
     'post_type' => 'metom_project',
     'posts_per_page' => 3,
@@ -32,7 +38,17 @@ $journal = new WP_Query([
     <p class="metom-kicker">Klien</p>
     <h2 id="clients-title">Dipercaya brand dan institusi.</h2>
     <div class="metom-client-list" aria-label="Beberapa klien Metom Design">
-      <span>AIA</span><span>Surabaya Patata</span><span>Charis National Academy</span><span>MNC Finance</span><span>AL IZZAH Leadership School</span><span>Malang Strudel</span>
+      <?php if ($clients->have_posts()) : while ($clients->have_posts()) : $clients->the_post(); ?>
+        <div class="metom-client-item">
+          <?php if (has_post_thumbnail()) : ?>
+            <?php the_post_thumbnail('medium', ['loading'=>'lazy','alt'=>get_the_title().' logo']); ?>
+          <?php else : ?>
+            <span><?php the_title(); ?></span>
+          <?php endif; ?>
+        </div>
+      <?php endwhile; wp_reset_postdata(); else : ?>
+        <span>AIA</span><span>Surabaya Patata</span><span>Charis National Academy</span><span>MNC Finance</span><span>AL IZZAH Leadership School</span><span>Malang Strudel</span>
+      <?php endif; ?>
     </div>
   </div>
 </section>
