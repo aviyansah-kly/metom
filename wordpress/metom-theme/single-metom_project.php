@@ -14,6 +14,20 @@
     $testimonial=get_post_meta(get_the_ID(),'metom_testimonial',true); if($testimonial){echo '<blockquote>'.esc_html($testimonial).'</blockquote>';}
     ?>
   </div>
+  <?php $gallery_ids=array_filter(array_map('absint',explode(',',(string)get_post_meta(get_the_ID(),'metom_gallery_ids',true)))); if($gallery_ids): ?>
+    <section class="project-gallery" aria-label="Gallery <?php echo esc_attr(get_the_title()); ?>">
+      <?php foreach($gallery_ids as $image_id): ?>
+        <figure class="project-gallery__item"><?php echo wp_get_attachment_image($image_id,'large',false,['loading'=>'lazy']); ?></figure>
+      <?php endforeach; ?>
+    </section>
+  <?php endif; ?>
+  <?php $service_id=(int)get_post_meta(get_the_ID(),'metom_service_id',true); if($service_id && get_post_status($service_id)==='publish'): ?>
+    <section class="project-related-service">
+      <p class="kicker">Layanan terkait</p>
+      <h2><?php echo esc_html(get_the_title($service_id)); ?></h2>
+      <a class="text-link" href="<?php echo esc_url(get_permalink($service_id)); ?>">Lihat layanan →</a>
+    </section>
+  <?php endif; ?>
 </article>
 <?php endwhile; ?>
 <?php get_footer(); ?>
