@@ -1,4 +1,4 @@
-name: Homepage final QA
+name: Refine navigation labels
 
 on:
   push:
@@ -14,15 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Apply homepage refinements
+      - name: Update navigation wording
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text()
-          old = '<div class="number"><strong>2014</strong><span>Didirikan</span></div><div class="number"><strong>Malang</strong><span>Basis layanan</span></div><div class="number"><strong>1 Tim</strong><span>Design + Build</span></div>'
-          new = '<div class="number"><strong>2014</strong><span>Mulai berkarya</span></div><div class="number"><strong>Malang</strong><span>Basis studio & layanan</span></div><div class="number"><strong>Skala Fleksibel</strong><span>Tim disesuaikan dengan kebutuhan proyek</span></div>'
-          s = s.replace(old, new)
+          s = s.replace('<a href="#layanan">Layanan</a><a href="#proyek">Proyek</a><a href="#proses">Proses</a><a href="#wawasan">Wawasan</a><a href="#faq">FAQ</a>', '<a href="#layanan">Jasa Interior</a><a href="#proyek">Proyek</a><a href="#proses">Cara Kerja</a><a href="#wawasan">Tips Interior</a><a href="#faq">FAQ</a>')
+          s = s.replace('>Konsultasi</a><button class="mobile-toggle"', '>Konsultasi WhatsApp</a><button class="mobile-toggle"')
+          s = s.replace('<div class="footer-links"><a href="#layanan">Layanan</a><a href="#proyek">Proyek</a><a href="#proses">Proses</a><a href="#wawasan">Wawasan</a><a href="#faq">FAQ</a></div>', '<div class="footer-links"><a href="#layanan">Jasa Interior</a><a href="#proyek">Proyek</a><a href="#proses">Cara Kerja</a><a href="#wawasan">Tips Interior</a><a href="#faq">FAQ</a></div>')
           p.write_text(s)
           PY
       - name: Commit changes
@@ -30,5 +30,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "refine: improve Metom capability stats"
+          git diff --cached --quiet || git commit -m "refine: optimize navigation labels for users and SEO"
           git push
