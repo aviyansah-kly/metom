@@ -1,0 +1,37 @@
+name: Fix AL IZZAH gallery overlap
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-al-izzah-gallery-overlap.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix gallery layout
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('proyek-al-izzah.html')
+          s=p.read_text()
+          old='.gallery-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));grid-auto-flow:dense;gap:16px}.gallery-item{position:relative;overflow:hidden;background:#eee;margin:0;min-width:0}.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.65,.25,1)}.gallery-item:hover img{transform:scale(1.025)}.gallery-item--hero{grid-column:span 7;grid-row:span 2;min-height:620px}.gallery-item--tall{grid-column:span 5;grid-row:span 2;min-height:620px}.gallery-item:not(.gallery-item--hero):not(.gallery-item--wide):not(.gallery-item--tall){grid-column:span 6;min-height:360px}.gallery-item--wide{grid-column:1/-1;min-height:520px}'
+          new='.gallery-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:start}.gallery-item{position:relative;overflow:hidden;background:#eee;margin:0;min-width:0;width:100%}.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.65,.25,1)}.gallery-item:hover img{transform:scale(1.025)}.gallery-item--hero{grid-column:span 7;aspect-ratio:7/5}.gallery-item--tall{grid-column:span 5;aspect-ratio:5/7}.gallery-item:not(.gallery-item--hero):not(.gallery-item--wide):not(.gallery-item--tall){grid-column:span 6;aspect-ratio:4/3}.gallery-item--wide{grid-column:1/-1;aspect-ratio:16/7}'
+          if old not in s:
+              raise SystemExit('desktop gallery CSS not found')
+          s=s.replace(old,new)
+          old2='@media(max-width:1050px){.project-intro,.story-grid,.quote-band .wrap{grid-template-columns:1fr;gap:36px}.project-facts{grid-template-columns:1fr 1fr}.project-fact:nth-child(3){border-left:0;padding-left:0}.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.gallery-item,.gallery-item--hero,.gallery-item--wide,.gallery-item--tall,.gallery-item:not(.gallery-item--hero):not(.gallery-item--wide):not(.gallery-item--tall){grid-column:span 1;grid-row:auto;min-height:300px}.gallery-item--wide{grid-column:1/-1;min-height:420px}}'
+          new2='@media(max-width:1050px){.project-intro,.story-grid,.quote-band .wrap{grid-template-columns:1fr;gap:36px}.project-facts{grid-template-columns:1fr 1fr}.project-fact:nth-child(3){border-left:0;padding-left:0}.gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.gallery-item,.gallery-item--hero,.gallery-item--wide,.gallery-item--tall,.gallery-item:not(.gallery-item--hero):not(.gallery-item--wide):not(.gallery-item--tall){grid-column:span 1;aspect-ratio:4/3}.gallery-item--hero{aspect-ratio:4/3}.gallery-item--tall{aspect-ratio:4/5}.gallery-item--wide{grid-column:1/-1;aspect-ratio:16/8}}'
+          if old2 not in s:
+              raise SystemExit('tablet gallery CSS not found')
+          s=s.replace(old2,new2)
+          p.write_text(s)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add proyek-al-izzah.html
+          git diff --cached --quiet || git commit -m "fix: prevent project gallery overlap"
+          git push
