@@ -1,4 +1,4 @@
-name: Refine navigation labels
+name: Final responsive homepage QA
 
 on:
   push:
@@ -14,15 +14,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Update navigation wording
+      - name: Finalize navigation and CTA hover
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text()
+
           s = s.replace('<a href="#layanan">Layanan</a><a href="#proyek">Proyek</a><a href="#proses">Proses</a><a href="#wawasan">Wawasan</a><a href="#faq">FAQ</a>', '<a href="#layanan">Jasa Interior</a><a href="#proyek">Proyek</a><a href="#proses">Cara Kerja</a><a href="#wawasan">Tips Interior</a><a href="#faq">FAQ</a>')
-          s = s.replace('>Konsultasi</a><button class="mobile-toggle"', '>Konsultasi WhatsApp</a><button class="mobile-toggle"')
           s = s.replace('<div class="footer-links"><a href="#layanan">Layanan</a><a href="#proyek">Proyek</a><a href="#proses">Proses</a><a href="#wawasan">Wawasan</a><a href="#faq">FAQ</a></div>', '<div class="footer-links"><a href="#layanan">Jasa Interior</a><a href="#proyek">Proyek</a><a href="#proses">Cara Kerja</a><a href="#wawasan">Tips Interior</a><a href="#faq">FAQ</a></div>')
+          s = s.replace('>Konsultasi</a><button class="mobile-toggle"', '>Konsultasi WhatsApp</a><button class="mobile-toggle"')
+
+          start = s.find('/* CTA hover fill: bottom to top */')
+          end = s.find('</style>', start) if start != -1 else -1
+          css = '''/* CTA hover fill: bottom to top + inverse colors */
+.btn{isolation:isolate;--btn-fill:#151515;--btn-hover:#fff;background-image:linear-gradient(var(--btn-fill),var(--btn-fill));background-repeat:no-repeat;background-position:left bottom;background-size:100% 0;transition:background-size .34s cubic-bezier(.2,.7,.2,1),color .24s ease,border-color .24s ease,transform .22s ease,box-shadow .22s ease}
+.btn:before{display:none!important}
+.btn:hover{background-size:100% 100%;color:var(--btn-hover)!important;border-color:var(--btn-fill);transform:translateY(-2px)}
+.btn--dark{background-color:#151515;color:#fff;--btn-fill:#fff;--btn-hover:#151515}
+.site-header .btn--dark:hover{color:#151515!important}
+.hero .btn{--btn-fill:#fff;--btn-hover:#111}
+.hero .btn--dark{background-color:#fff;color:#111;--btn-fill:#111;--btn-hover:#fff}
+.final-cta .btn{--btn-fill:#fff;--btn-hover:#111}
+.final-cta .btn--dark{background-color:#fff;color:#111;--btn-fill:#111;--btn-hover:#fff}
+.case-copy .btn{--btn-fill:#fff;--btn-hover:#111}
+@media(max-width:720px){.hero-actions{display:grid;grid-template-columns:1fr;gap:10px}.hero-actions .btn,.final-actions .btn{width:100%;min-height:50px}.numbers{grid-template-columns:1fr 1fr}.number:last-child{grid-column:1/-1}.number strong{font-size:30px}.mobile-open .nav-links{max-height:calc(100svh - 70px);overflow:auto}}
+@media(max-width:380px){.display{font-size:42px}.hero-inner{padding-top:118px}.numbers{grid-template-columns:1fr}.number:last-child{grid-column:auto}}
+'''
+          if start != -1 and end != -1:
+              s = s[:start] + css + s[end:]
+          else:
+              s = s.replace('</style>', css + '</style>', 1)
+
           p.write_text(s)
           PY
       - name: Commit changes
@@ -30,5 +53,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "refine: optimize navigation labels for users and SEO"
+          git diff --cached --quiet || git commit -m "qa: finalize responsive navigation and inverse CTA hover"
           git push
