@@ -1,4 +1,4 @@
-name: Refine client logo marquee
+name: Homepage final QA
 
 on:
   push:
@@ -14,14 +14,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Refine client logo hover behavior
+      - name: Apply homepage refinements
         run: |
           python - <<'PY'
           from pathlib import Path
           p = Path('index.html')
           s = p.read_text()
-          s = s.replace("filter:grayscale(1);opacity:.68;transition:opacity .25s ease,filter .25s ease,transform .25s ease", "filter:none;opacity:.9;transition:opacity .25s ease,transform .25s ease")
-          s = s.replace(".trust-logo:hover img{opacity:1;filter:grayscale(0);transform:scale(1.04)}", ".trust-logo:hover img{opacity:1;transform:scale(1.08)}")
+
+          s = s.replace('Jasa Interior Malang, dari Desain sampai Jadi.', 'Jasa Desain Interior Malang, dari Desain hingga Pengerjaan.')
+          s = s.replace('Metom Design membantu merancang dan mengerjakan interior rumah, kitchen set, kantor, custom furniture, dan ruang komersial dengan satu alur kerja yang jelas.', 'Metom Design melayani desain interior, pengerjaan interior, kitchen set, custom furniture, rumah, kantor, dan ruang komersial di Malang dan Batu.')
+          s = s.replace('Setiap layanan akan menjadi landing page tersendiri agar mudah ditemukan dari Google, sekaligus tetap mudah dipahami calon klien.', 'Pilih layanan sesuai kebutuhan—mulai dari desain interior, kitchen set, interior rumah dan kantor, custom furniture, hingga design & build.')
+          s = s.replace('Metom Design berbasis di Malang dan melayani kebutuhan interior di Malang Raya dan Batu. Halaman layanan akan diperkuat dengan project nyata, area layanan, review, dan Google Business Profile.', 'Metom Design berbasis di Malang dan melayani kebutuhan interior di Malang Raya dan Batu, dengan pengalaman pada proyek hunian, pendidikan, dan ruang komersial.')
+          s = s.replace('Punya ruang yang ingin dirancang atau dibenahi?', 'Diskusikan kebutuhan interior Anda dengan Metom.')
+          s = s.replace('Ceritakan kebutuhan, lokasi, dan kondisi ruang Anda. Metom akan membantu menentukan langkah awal yang paling relevan.', 'Kirim lokasi, jenis ruang, dan kebutuhan awal melalui WhatsApp. Tim Metom akan membantu menentukan langkah berikutnya.')
+
+          old_wa = 'https://wa.me/6281231131796'
+          wa = 'https://api.whatsapp.com/send/?phone=6281231131796&text=Halo%20Metom%20Design%2C%20saya%20ingin%20konsultasi%20mengenai%20kebutuhan%20interior.%20Lokasi%20proyek%20saya%20di%20...%20dan%20kebutuhan%20saya%20adalah%20...&type=phone_number&app_absent=0'
+          s = s.replace(old_wa + '?text=Halo%20Metom%20Design%2C%20saya%20ingin%20konsultasi%20mengenai%20kebutuhan%20interior.', wa)
+          s = s.replace(old_wa, wa)
+
+          email_button = '<a class="btn" style="color:#fff" href="mailto:metomdesign@gmail.com">Email Metom<svg class="icon-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>'
+          s = s.replace(email_button, '')
+
+          marker = '<details><summary>Apakah tersedia survey lokasi?</summary>'
+          if 'Apakah Metom bisa mengerjakan jika desain sudah tersedia?' not in s:
+              extra = '<details><summary>Apakah Metom bisa mengerjakan jika desain sudah tersedia?</summary><div class="faq-answer">Bisa. Jika Anda sudah memiliki desain atau gambar kerja, Metom dapat fokus pada produksi dan pengerjaan setelah scope, spesifikasi, ukuran lapangan, dan material disepakati bersama.</div></details>'
+              s = s.replace(marker, extra + marker, 1)
+
+          css = '''
+/* CTA hover fill: bottom to top */
+.btn{isolation:isolate;background-image:linear-gradient(var(--btn-fill,#151515),var(--btn-fill,#151515));background-repeat:no-repeat;background-position:left bottom;background-size:100% 0;transition:background-size .34s cubic-bezier(.2,.7,.2,1),color .24s ease,border-color .24s ease,transform .22s ease,box-shadow .22s ease}
+.btn:before{display:none!important}
+.btn:hover{background-size:100% 100%;color:var(--btn-hover,#fff);border-color:var(--btn-fill,#151515);transform:translateY(-2px)}
+.btn--dark{--btn-fill:#fff;--btn-hover:#151515}
+.hero .btn{--btn-fill:#fff;--btn-hover:#111}
+.hero .btn--dark{--btn-fill:#111;--btn-hover:#fff}
+.final-cta .btn{--btn-fill:#fff;--btn-hover:#111}
+.final-cta .btn--dark{--btn-fill:#111;--btn-hover:#fff}
+'''
+          if '/* CTA hover fill: bottom to top */' not in s:
+              s = s.replace('</style>', css + '</style>', 1)
+
           p.write_text(s)
           PY
       - name: Commit changes
@@ -29,5 +62,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "refine: use full-color client logos with hover scale"
+          git diff --cached --quiet || git commit -m "qa: refine homepage copy SEO and WhatsApp CTA"
           git push
