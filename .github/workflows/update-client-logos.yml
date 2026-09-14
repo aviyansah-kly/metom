@@ -1,4 +1,4 @@
-name: Update client logo marquee
+name: Refine client logo marquee
 
 on:
   push:
@@ -14,26 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Replace client logos with text marquee
+      - name: Refine client logo hover behavior
         run: |
           python - <<'PY'
           from pathlib import Path
-          import re
           p = Path('index.html')
           s = p.read_text()
-
-          css = '''.client-name{display:flex;align-items:center;justify-content:center;min-width:max-content;height:70px;padding:0 8px;font-size:20px;font-weight:400;letter-spacing:-.02em;color:#565954;white-space:nowrap;opacity:.78;transition:opacity .25s ease,color .25s ease}.client-name:hover{opacity:1;color:#171817}@media(max-width:640px){.client-name{font-size:17px;height:58px}}\n'''
-          if '.client-name{' not in s:
-              s = s.replace('.insights{', css + '.insights{', 1)
-
-          start = s.index('<section class="client-marquee"')
-          end = s.index('<section class="insights"', start)
-          names = ['AIA','Surabaya Patata','Charis National Academy','MNC Finance','AL IZZAH Leadership School','Malang Strudel']
-          items = ''.join(f'<div class="client-name">{n}</div>' for n in names * 2)
-          section = f'''<section class="client-marquee" aria-labelledby="client-title"><div class="wrap client-marquee-head"><div><div class="kicker">Klien</div><h2 id="client-title">Pernah dipercaya berbagai brand dan institusi.</h2></div><p>Beberapa klien yang pernah bekerja sama dengan Metom Design.</p></div><div class="logo-marquee" aria-label="Daftar klien Metom Design"><div class="logo-track">{items}</div></div></section>\n'''
-          s = s[:start] + section + s[end:]
-
-          s = re.sub(r"\n\s*fetch\('assets/clients/client-logos\.png'.*?\n\s*\.catch\(function\(\)\{.*?\}\);\n", '\n', s, count=1, flags=re.S)
+          s = s.replace("filter:grayscale(1);opacity:.68;transition:opacity .25s ease,filter .25s ease,transform .25s ease", "filter:none;opacity:.9;transition:opacity .25s ease,transform .25s ease")
+          s = s.replace(".trust-logo:hover img{opacity:1;filter:grayscale(0);transform:scale(1.04)}", ".trust-logo:hover img{opacity:1;transform:scale(1.08)}")
           p.write_text(s)
           PY
       - name: Commit changes
@@ -41,5 +29,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index.html
-          git diff --cached --quiet || git commit -m "fix: temporarily use client names in marquee"
+          git diff --cached --quiet || git commit -m "refine: use full-color client logos with hover scale"
           git push
