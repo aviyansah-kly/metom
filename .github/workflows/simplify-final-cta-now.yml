@@ -1,0 +1,37 @@
+name: Simplify final CTA now
+on:
+  push:
+    paths:
+      - '.github/workflows/simplify-final-cta-now.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Simplify CTA
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('index.html')
+          s=p.read_text()
+          # Replace final CTA section only
+          new='''<section class="final-cta"><div class="wrap simple-final"><div class="eyebrow">Mulai proyek</div><h2 class="h2">Punya ruang yang ingin dikerjakan?</h2><p class="copy">Ceritakan kebutuhan dan lokasi proyek Anda. Tim Metom akan membantu menentukan langkah berikutnya.</p><div class="final-actions"><a class="btn btn--dark" href="https://api.whatsapp.com/send/?phone=6281231131796&text=Halo%20Metom%20Design%2C%20saya%20ingin%20konsultasi%20mengenai%20kebutuhan%20interior.%20Lokasi%20proyek%20saya%20di%20...%20dan%20kebutuhan%20saya%20adalah%20...&type=phone_number&app_absent=0" target="_blank" rel="noopener">Konsultasi via WhatsApp<svg class="icon-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></div></section>'''
+          s2,n=re.subn(r'<section class="final-cta">.*?</section>',new,s,count=1,flags=re.S)
+          if n!=1:
+              raise SystemExit(f'final CTA replacement count={n}')
+          css='''\n/* Minimal final CTA */\n.final-cta{background:#111!important;color:#fff!important;padding:96px 0!important;min-height:0!important;display:block!important;position:relative!important;overflow:visible!important}\n.final-cta:after,.final-cta-media,.final-meta{display:none!important}\n.simple-final{display:block!important}\n.simple-final .eyebrow{color:#8f8f8f!important;margin-bottom:16px!important}\n.simple-final .h2{max-width:760px!important;font-size:clamp(40px,4.6vw,66px)!important;line-height:.98!important}\n.simple-final .copy{max-width:620px!important;margin:24px 0 0!important;color:#c6c6c6!important;font-size:17px!important}\n.simple-final .final-actions{margin-top:30px!important;display:flex!important}\n.simple-final .btn{border-color:#fff!important}\n.simple-final .btn--dark{background:#fff!important;color:#111!important}\n@media(max-width:720px){.final-cta{padding:72px 0!important}.simple-final .h2{font-size:40px!important}.simple-final .copy{font-size:16px!important}.simple-final .final-actions{display:block!important}.simple-final .final-actions .btn{width:100%!important}}\n'''
+          s2=s2.replace('</style>',css+'</style>',1)
+          p.write_text(s2)
+          PY
+      - name: Cleanup and commit
+        run: |
+          rm .github/workflows/simplify-final-cta-now.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/simplify-final-cta-now.yml
+          git commit -m "refine: simplify final CTA section"
+          git push
