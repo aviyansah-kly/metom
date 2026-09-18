@@ -171,3 +171,65 @@
 }
 .btn svg{stroke:currentColor!important}
 .btn:hover svg{transform:translateX(3px)}
+
+/* Button DS v3: explicit readable hover states */
+/* White button */
+.btn--light{
+  background-color:#fff!important;
+  color:#151515!important;
+}
+.btn--light:hover{
+  background-size:100% 100%!important;
+  color:#fff!important;
+  border-color:currentColor;
+}
+.btn--light:hover,
+.btn--light:hover *,
+.btn--light:hover svg{
+  color:#fff!important;
+  stroke:#fff!important;
+}
+
+/* Dark button */
+.btn--dark{
+  background-color:#151515!important;
+  color:#fff!important;
+}
+.btn--dark:hover{
+  background-size:100% 100%!important;
+  color:#151515!important;
+}
+.btn--dark:hover,
+.btn--dark:hover *,
+.btn--dark:hover svg{
+  color:#151515!important;
+  stroke:#151515!important;
+}
+
+/* Ghost / outline button on dark backgrounds */
+.btn--outline-light{
+  background-color:transparent!important;
+  color:#fff!important;
+  border-color:#fff!important;
+  --btn-fill:#fff!important;
+}
+.btn--outline-light:hover{
+  background-size:100% 100%!important;
+  color:#151515!important;
+  border-color:#fff!important;
+}
+.btn--outline-light:hover,
+.btn--outline-light:hover *,
+.btn--outline-light:hover svg{
+  color:#151515!important;
+  stroke:#151515!important;
+}
+
+/* CTA area keeps white outline but readable inverted hover */
+.final-cta .btn--light{
+  border-color:#fff!important;
+}
+.final-cta .btn--light:hover{
+  color:#fff!important;
+  border-color:#fff!important;
+}
