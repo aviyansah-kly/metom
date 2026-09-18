@@ -58,3 +58,41 @@
 @keyframes waPulse{0%{transform:scale(.9);opacity:.8}70%{opacity:.18}100%{transform:scale(1.16);opacity:0}}
 @media(max-width:720px){.page-hero-media{margin-top:34px;aspect-ratio:4/3}.wa-float{right:16px;bottom:16px;padding:9px 14px 9px 10px;min-height:54px}.wa-icon{width:34px;height:34px}}
 @media(prefers-reduced-motion:reduce){.wa-float:before,.wa-float:after{animation:none}.page-hero-media img{transition:none}}
+
+/* Design system: invariant button interaction */
+.btn{
+  border:1px solid #151515!important;
+  background-color:#fff;
+  color:#151515;
+  --btn-fill:#151515;
+  --btn-hover:#fff;
+  background-image:linear-gradient(var(--btn-fill),var(--btn-fill));
+  background-repeat:no-repeat;
+  background-position:left bottom;
+  background-size:100% 0;
+}
+.btn:hover{
+  background-size:100% 100%;
+  color:var(--btn-hover)!important;
+  border-color:#151515!important;
+}
+.btn--dark{
+  background-color:#151515;
+  color:#fff;
+  border-color:#151515!important;
+  --btn-fill:#fff;
+  --btn-hover:#151515;
+}
+.btn--dark:hover{
+  border-color:#151515!important;
+}
+.final-cta .btn--dark{
+  background-color:#fff!important;
+  color:#151515!important;
+  border-color:#fff!important;
+  --btn-fill:#151515;
+  --btn-hover:#fff;
+}
+.final-cta .btn--dark:hover{
+  border-color:#fff!important;
+}
