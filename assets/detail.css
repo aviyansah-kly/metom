@@ -373,3 +373,125 @@
   .article-hero .h1{font-size:40px}
   .simple-final .h2{font-size:36px}
 }
+
+
+/* Metom Design System v5 — centered page heroes & compact buttons */
+/* Reusable centered hero for secondary pages */
+.hero--center{
+  text-align:center;
+}
+.hero--center .hero-grid{
+  display:block;
+  max-width:980px;
+  margin:0 auto;
+}
+.hero--center .hero-grid>div{
+  max-width:900px;
+  margin-inline:auto;
+}
+.hero--center .h1,
+.hero--center .copy{
+  margin-left:auto;
+  margin-right:auto;
+}
+.hero--center .hero .copy,
+.hero.hero--center .copy{
+  max-width:680px;
+}
+.hero--center .hero-actions{
+  justify-content:center;
+}
+.hero--center .page-hero-media,
+.hero--center .hero-media{
+  text-align:left;
+}
+
+/* Project detail uses its own hero structure */
+.project-hero.hero--center .project-title,
+.project-hero.hero--center .project-intro{
+  max-width:900px;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+}
+.project-hero.hero--center .project-intro{
+  max-width:680px;
+}
+.project-hero.hero--center .project-intro .copy{
+  margin-left:auto;
+  margin-right:auto;
+}
+
+/* Buttons must size to their label, never stretch because of grid/flex parent */
+.btn{
+  width:auto!important;
+  max-width:max-content;
+  flex:0 0 auto;
+}
+.section-head>.btn,
+.hero-actions>.btn,
+.final-actions>.btn,
+.split .btn,
+.intro-grid .btn{
+  width:auto!important;
+  max-width:max-content;
+  justify-self:start;
+}
+.section-head>.btn{
+  justify-self:end;
+  align-self:end;
+}
+.hero--center .hero-actions>.btn{
+  justify-self:auto;
+}
+.simple-final .final-actions .btn{
+  width:auto!important;
+}
+
+/* Share actions */
+.article-share{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:24px;
+}
+.article-share-label{
+  font-size:14px;
+  color:#777;
+  margin-right:2px;
+}
+.btn--compact{
+  min-height:42px;
+  padding:0 16px;
+  font-size:14px;
+}
+
+/* Keep share/status feedback subtle */
+.share-status{
+  font-size:13px;
+  color:#777;
+  min-height:20px;
+}
+
+@media(max-width:720px){
+  .hero--center{
+    text-align:center;
+  }
+  .hero--center .hero-actions{
+    display:flex;
+    justify-content:center;
+  }
+  .hero--center .hero-actions>.btn,
+  .section-head>.btn,
+  .simple-final .final-actions .btn{
+    width:auto!important;
+    max-width:max-content;
+  }
+  .section-head>.btn{
+    justify-self:start;
+  }
+  .article-share{
+    justify-content:flex-start;
+  }
+}
