@@ -233,3 +233,143 @@
   color:#fff!important;
   border-color:#fff!important;
 }
+
+
+/* Metom Design System v4 — content typography & spacing */
+:root{
+  --type-page-h1:clamp(46px,5.2vw,68px);
+  --type-section-h2:clamp(34px,3.7vw,52px);
+  --type-card-h3:24px;
+  --type-lead:18px;
+  --type-body:16px;
+  --type-meta:13px;
+  --space-section:88px;
+  --space-section-mobile:66px;
+  --copy-max:640px;
+  --copy-narrow:580px;
+}
+
+/* Content scale: all secondary pages */
+.h1{
+  font-size:var(--type-page-h1);
+  line-height:.98;
+  letter-spacing:-.048em;
+}
+.h2{
+  font-size:var(--type-section-h2);
+  line-height:1;
+  letter-spacing:-.04em;
+}
+.h3{
+  font-size:var(--type-card-h3);
+  line-height:1.12;
+  letter-spacing:-.025em;
+}
+.eyebrow{
+  font-size:var(--type-meta);
+  margin-bottom:16px;
+}
+.copy{
+  font-size:var(--type-lead);
+  line-height:1.6;
+  max-width:var(--copy-max);
+}
+.section{
+  padding:var(--space-section) 0;
+}
+.hero{
+  padding:72px 0 44px;
+}
+.hero-grid{
+  gap:60px;
+}
+.hero .copy{
+  max-width:var(--copy-narrow);
+  margin-top:24px;
+}
+.page-hero-media{
+  margin-top:44px;
+}
+.section-head{
+  gap:56px;
+  margin-bottom:44px;
+}
+.section-head .copy{
+  max-width:520px;
+}
+.intro-grid,.split{
+  gap:64px;
+}
+.feature b{
+  margin-bottom:34px;
+}
+.card h3{
+  font-size:23px;
+}
+.card p{
+  font-size:15px;
+  line-height:1.55;
+}
+.final-cta{
+  padding:88px 0;
+}
+.simple-final .h2{
+  font-size:clamp(36px,4vw,56px);
+  max-width:720px;
+}
+.simple-final .copy{
+  max-width:580px;
+}
+
+/* Template-specific hierarchy */
+.project-title .h1{
+  font-size:clamp(48px,5.4vw,72px);
+}
+.article-hero .h1{
+  font-size:clamp(42px,4.8vw,64px);
+  line-height:1;
+  letter-spacing:-.045em;
+}
+.article-hero .copy{
+  max-width:680px;
+}
+.article-body{
+  max-width:760px!important;
+}
+.article-body p,.article-body li{
+  font-size:17px!important;
+  line-height:1.72;
+}
+.article-body h2{
+  font-size:32px!important;
+  line-height:1.1!important;
+}
+
+/* Keep portfolio hero editorial but controlled */
+.project-page-hero .h1{
+  font-size:clamp(48px,5.4vw,72px);
+}
+.project-page-hero .copy{
+  max-width:680px;
+}
+
+@media(max-width:1024px){
+  .hero-grid{gap:30px}
+  .intro-grid,.split{gap:32px}
+  .section-head{gap:22px}
+}
+
+@media(max-width:720px){
+  :root{
+    --type-page-h1:42px;
+    --type-section-h2:34px;
+    --type-card-h3:22px;
+    --type-lead:17px;
+  }
+  .section{padding:var(--space-section-mobile) 0}
+  .hero{padding:50px 0 32px}
+  .page-hero-media{margin-top:30px}
+  .project-title .h1,.project-page-hero .h1{font-size:44px}
+  .article-hero .h1{font-size:40px}
+  .simple-final .h2{font-size:36px}
+}
