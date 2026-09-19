@@ -149,3 +149,32 @@ jobs:
         run: |
           ssh -i ~/.ssh/metom_deploy -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" \
             'test -f ~/public_html/metom-static/index.html && test -f ~/public_html/.htaccess && echo "Metom production files are in place."'
+
+      - name: Verify public SEO routes
+        run: |
+          set -euo pipefail
+
+          assert_200() {
+            url="$1"
+            code="$(curl -sS -o /tmp/metom-response -w '%{http_code}' "$url")"
+            test "$code" = "200" || (echo "Expected 200 for $url, got $code" && exit 1)
+            echo "200 $url"
+          }
+
+          assert_200 "https://metom.id/"
+          assert_200 "https://metom.id/blog/"
+          assert_200 "https://metom.id/blog/harga-kitchen-set-malang/"
+          assert_200 "https://metom.id/sitemap.xml"
+          grep -q "https://metom.id/blog/" /tmp/metom-response || (echo "Sitemap does not contain /blog/" && exit 1)
+
+          assert_200 "https://metom.id/robots.txt"
+          grep -q "Sitemap: https://metom.id/sitemap.xml" /tmp/metom-response || (echo "robots.txt sitemap directive missing" && exit 1)
+
+          headers="$(curl -sSI "https://metom.id/jurnal/")"
+          echo "$headers" | grep -Eq '^HTTP/[^ ]+ 301' || (echo "Expected /jurnal/ to return 301" && exit 1)
+          echo "$headers" | grep -Eqi '^location: /blog/?\r?$|^location: https://metom.id/blog/?\r? || (echo "Expected /jurnal/ to redirect to /blog/" && exit 1)
+
+          homepage="$(curl -sS "https://metom.id/")"
+          echo "$homepage" | grep -q 'meta name="robots" content="index,follow' || (echo "Homepage index/follow meta missing" && exit 1)
+          echo "$homepage" | grep -q 'rel="canonical" href="https://metom.id/"' || (echo "Homepage canonical missing" && exit 1)
+          echo "Public SEO route verification passed."
