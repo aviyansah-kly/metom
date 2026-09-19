@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://metom.id/sitemap.xml
