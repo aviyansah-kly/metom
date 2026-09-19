@@ -14,14 +14,14 @@ Prototype HTML di root repository tetap menjadi visual baseline. WordPress hanya
 Gunakan folder `/content` sebagai sumber data terstruktur ketika memindahkan static site ke WordPress:
 
 - `content/projects/*.md` → CPT `metom_project`
-- `content/journal/*.md` → native WordPress Post
+- `content/blog/*.md` → native WordPress Post
 - `content/projects/_template.md` → template project baru
-- `content/journal/_template.md` → template artikel baru
+- `content/blog/_template.md` → template artikel baru
 
 Public slug harus dipertahankan. Contoh:
 
 - `content/projects/al-izzah.md` → `/proyek/al-izzah/`
-- `content/journal/harga-kitchen-set-malang.md` → `/jurnal/harga-kitchen-set-malang/`
+- `content/blog/harga-kitchen-set-malang.md` → `/blog/harga-kitchen-set-malang/`
 
 Folder `wordpress/` tidak ikut deployment static cPanel. Folder ini khusus source theme dan handoff CMS.
 
@@ -35,7 +35,7 @@ Folder `wordpress/` tidak ikut deployment static cPanel. Folder ini khusus sourc
 6. SEO Service Section
 7. Process
 8. Studio
-9. Journal / Insights
+9. Blog / Tips Interior
 10. Final CTA
 
 ## Content model
@@ -67,7 +67,7 @@ Folder `wordpress/` tidak ikut deployment static cPanel. Folder ini khusus sourc
 - FAQ
 - CTA
 
-### Journal
+### Blog
 Use native WordPress posts for SEO articles and supporting content.
 
 ## Initial service pages
@@ -110,7 +110,7 @@ Each project should also have location, year, category, scope, challenge, soluti
 - [ ] Implement front page dynamically
 - [ ] Implement Project archive + single template
 - [ ] Implement Service archive + single template
-- [ ] Implement Journal archive + single post
+- [ ] Implement Blog archive + single post
 - [ ] Add custom fields (ACF or native meta)
 - [ ] Import organized portfolio + client logos
 - [ ] Responsive/browser QA
