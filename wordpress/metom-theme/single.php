@@ -3,15 +3,17 @@
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
   <article>
     <header class="metom-article__header metom-shell">
-      <p class="metom-kicker">Jurnal Metom</p>
+      <p class="metom-kicker">Blog Interior</p>
       <h1><?php the_title(); ?></h1>
       <p class="metom-article__meta">Diperbarui <?php echo esc_html(get_the_modified_date('j F Y')); ?> · <?php echo esc_html(get_the_author()); ?></p>
       <?php if (has_excerpt()) : ?><div class="metom-article__lead"><?php the_excerpt(); ?></div><?php endif; ?>
+      <?php echo metom_share_buttons('top'); ?>
     </header>
     <?php if (has_post_thumbnail()) : ?><div class="metom-shell metom-article__hero"><?php the_post_thumbnail('full'); ?></div><?php endif; ?>
     <div class="metom-shell metom-article__layout">
       <div class="metom-article__content">
         <?php the_content(); ?>
+        <?php echo metom_share_buttons('bottom'); ?>
         <?php
         $service_id=(int)get_post_meta(get_the_ID(),'metom_related_service',true);
         $project_id=(int)get_post_meta(get_the_ID(),'metom_related_project',true);
@@ -44,4 +46,19 @@
   </article>
 <?php endwhile; endif; ?>
 </main>
+<script>
+(function(){
+  const url=window.location.href,title=document.title,eu=encodeURIComponent(url),et=encodeURIComponent(title);
+  const status=(el,msg)=>{const s=el.closest('.metom-share')?.querySelector('.metom-share__status');if(s){s.textContent=msg;setTimeout(()=>s.textContent='',1800);}};
+  const copy=async(el,msg='Link disalin')=>{try{await navigator.clipboard.writeText(url);status(el,msg);}catch(e){}};
+  document.querySelectorAll('[data-share]').forEach(el=>{
+    const type=el.dataset.share;
+    if(type==='facebook'){el.href='https://www.facebook.com/sharer/sharer.php?u='+eu;el.target='_blank';el.rel='noopener noreferrer';}
+    if(type==='x'||type==='twitter'){el.href='https://twitter.com/intent/tweet?url='+eu+'&text='+et;el.target='_blank';el.rel='noopener noreferrer';}
+    if(type==='copy') el.addEventListener('click',()=>copy(el));
+    if(type==='instagram') el.addEventListener('click',()=>copy(el,'Link disalin — siap ditempel di Instagram'));
+    if(type==='tiktok') el.addEventListener('click',()=>copy(el,'Link disalin — siap ditempel di TikTok'));
+  });
+})();
+</script>
 <?php get_footer(); ?>
