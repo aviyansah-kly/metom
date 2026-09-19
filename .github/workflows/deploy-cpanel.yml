@@ -171,7 +171,11 @@ jobs:
 
           headers="$(curl -sSI "https://metom.id/jurnal/")"
           echo "$headers" | grep -Eq '^HTTP/[^ ]+ 301' || (echo "Expected /jurnal/ to return 301" && exit 1)
-          echo "$headers" | grep -Eqi '^location: /blog/?\r?$|^location: https://metom.id/blog/?\r? || (echo "Expected /jurnal/ to redirect to /blog/" && exit 1)
+          location="$(printf '%s\n' "$headers" | awk 'tolower($1)=="location:" {print $2}' | tr -d '\r')"
+          case "$location" in
+            /blog/|https://metom.id/blog/) ;;
+            *) echo "Expected /jurnal/ to redirect to /blog/, got: $location"; exit 1 ;;
+          esac
 
           homepage="$(curl -sS "https://metom.id/")"
           echo "$homepage" | grep -q 'meta name="robots" content="index,follow' || (echo "Homepage index/follow meta missing" && exit 1)
