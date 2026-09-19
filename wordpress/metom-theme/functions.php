@@ -175,7 +175,7 @@ function metom_schema_output() {
     if(is_front_page()){
         $data=['@context'=>'https://schema.org','@type'=>'InteriorDesigner','name'=>get_bloginfo('name'),'url'=>home_url('/'),'telephone'=>get_theme_mod('metom_whatsapp_number','6281231131796'),'areaServed'=>['Malang','Batu','Jawa Timur']];
     }elseif(is_singular('post')){
-        $data=['@context'=>'https://schema.org','@type'=>'Article','headline'=>get_the_title(),'datePublished'=>get_the_date(DATE_W3C),'dateModified'=>get_the_modified_date(DATE_W3C),'mainEntityOfPage'=>get_permalink(),'author'=>['@type'=>'Organization','name'=>'Metom Design'],'publisher'=>['@type'=>'Organization','name'=>'Metom Design','url'=>home_url('/')]];
+        $data=['@context'=>'https://schema.org','@type'=>'Article','headline'=>get_the_title(),'datePublished'=>get_the_date(DATE_W3C),'dateModified'=>get_the_modified_date(DATE_W3C),'mainEntityOfPage'=>get_permalink(),'author'=>['@type'=>'Organization','name'=>'Metom Design'],'publisher'=>['@type'=>'Organization','name'=>'Metom Design','url'=>home_url('/'),'logo'=>['@type'=>'ImageObject','url'=>get_template_directory_uri().'/assets/brand/metom_logo.png']],'inLanguage'=>get_bloginfo('language')];
         if(has_post_thumbnail()) $data['image']=[get_the_post_thumbnail_url(null,'full')];
     }elseif(is_singular('metom_project')){
         $data=['@context'=>'https://schema.org','@type'=>'CreativeWork','name'=>get_the_title(),'url'=>get_permalink(),'creator'=>['@type'=>'Organization','name'=>'Metom Design','url'=>home_url('/')]];
@@ -187,3 +187,63 @@ function metom_schema_output() {
     if($data) echo '<script type="application/ld+json">'.wp_json_encode($data,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE).'</script>';
 }
 add_action('wp_head','metom_schema_output',20);
+
+
+/**
+ * Lightweight SEO fallbacks when no dedicated SEO plugin is active.
+ * Yoast/Rank Math/AIOSEO take precedence to avoid duplicate metadata.
+ */
+function metom_social_meta_output() {
+    if (metom_has_seo_plugin() || !is_singular('post')) return;
+    $title=wp_strip_all_tags(get_the_title());
+    $description=has_excerpt() ? wp_strip_all_tags(get_the_excerpt()) : wp_trim_words(wp_strip_all_tags(get_the_content()),28,'…');
+    $url=get_permalink();
+    $image=has_post_thumbnail() ? get_the_post_thumbnail_url(null,'full') : get_template_directory_uri().'/assets/brand/metom_logo.png';
+    echo "\n".'<meta name="author" content="'.esc_attr(get_the_author()).'">';
+    echo "\n".'<meta property="og:type" content="article">';
+    echo "\n".'<meta property="og:locale" content="'.esc_attr(str_replace('-','_',get_bloginfo('language'))).'">';
+    echo "\n".'<meta property="og:site_name" content="'.esc_attr(get_bloginfo('name')).'">';
+    echo "\n".'<meta property="og:title" content="'.esc_attr($title).'">';
+    echo "\n".'<meta property="og:description" content="'.esc_attr($description).'">';
+    echo "\n".'<meta property="og:url" content="'.esc_url($url).'">';
+    echo "\n".'<meta property="og:image" content="'.esc_url($image).'">';
+    echo "\n".'<meta property="article:published_time" content="'.esc_attr(get_the_date(DATE_W3C)).'">';
+    echo "\n".'<meta property="article:modified_time" content="'.esc_attr(get_the_modified_date(DATE_W3C)).'">';
+    echo "\n".'<meta name="twitter:card" content="summary_large_image">';
+    echo "\n".'<meta name="twitter:title" content="'.esc_attr($title).'">';
+    echo "\n".'<meta name="twitter:description" content="'.esc_attr($description).'">';
+    echo "\n".'<meta name="twitter:image" content="'.esc_url($image).'">';
+}
+add_action('wp_head','metom_social_meta_output',15);
+
+function metom_breadcrumb_schema_output() {
+    if (metom_has_seo_plugin() || !is_singular('post')) return;
+    $blog_url=home_url('/jurnal/');
+    $data=[
+        '@context'=>'https://schema.org',
+        '@type'=>'BreadcrumbList',
+        'itemListElement'=>[
+            ['@type'=>'ListItem','position'=>1,'name'=>'Home','item'=>home_url('/')],
+            ['@type'=>'ListItem','position'=>2,'name'=>'Blog Interior','item'=>$blog_url],
+            ['@type'=>'ListItem','position'=>3,'name'=>get_the_title(),'item'=>get_permalink()],
+        ],
+    ];
+    echo '<script type="application/ld+json">'.wp_json_encode($data,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE).'</script>';
+}
+add_action('wp_head','metom_breadcrumb_schema_output',21);
+
+function metom_share_buttons($position='top') {
+    $class='metom-share'.($position==='bottom'?' metom-share--bottom':'');
+    ob_start(); ?>
+    <div class="<?php echo esc_attr($class); ?>" aria-label="<?php esc_attr_e('Bagikan artikel','metom'); ?>">
+      <span class="metom-share__label"><?php esc_html_e($position==='bottom'?'Bagikan artikel':'Bagikan','metom'); ?></span>
+      <a class="metom-share__icon metom-share__icon--fb" data-share="facebook" href="#" aria-label="Facebook" title="Facebook"><span aria-hidden="true">f</span></a>
+      <a class="metom-share__icon" data-share="x" href="#" aria-label="X" title="X"><span aria-hidden="true">X</span></a>
+      <a class="metom-share__icon" data-share="twitter" href="#" aria-label="Twitter" title="Twitter"><span aria-hidden="true">t</span></a>
+      <button class="metom-share__icon" type="button" data-share="instagram" aria-label="Instagram" title="Instagram"><span aria-hidden="true">◎</span></button>
+      <button class="metom-share__icon" type="button" data-share="tiktok" aria-label="TikTok" title="TikTok"><span aria-hidden="true">♪</span></button>
+      <button class="metom-share__icon" type="button" data-share="copy" aria-label="<?php esc_attr_e('Copy Link','metom'); ?>" title="Copy Link"><span aria-hidden="true">↗</span></button>
+      <span class="metom-share__status" aria-live="polite"></span>
+    </div>
+    <?php return ob_get_clean();
+}
