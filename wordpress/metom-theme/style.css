@@ -25,7 +25,7 @@ Text Domain: metom
 
 /* Official Metom logo */
 .logo,.custom-logo-link{display:inline-flex;align-items:center}
-.metom-brand-logo,.custom-logo{display:block;width:108px;height:auto;max-height:36px;object-fit:contain}
-.metom-footer-logo{display:inline-block;margin-bottom:14px}
-.metom-footer-logo img{display:block;width:160px;height:auto;max-height:62px;object-fit:contain}
-@media(max-width:640px){.metom-brand-logo,.custom-logo{width:88px;max-height:30px}.metom-footer-logo img{width:132px;max-height:50px}}
+.metom-brand-logo,.custom-logo{display:block;width:150px;height:auto;max-height:52px;object-fit:contain}
+.metom-footer-logo{display:inline-block;margin-bottom:18px}
+.metom-footer-logo img{display:block;width:220px;height:auto;max-height:84px;object-fit:contain}
+@media(max-width:640px){.metom-brand-logo,.custom-logo{width:92px;max-height:32px}.metom-footer-logo img{width:140px;max-height:54px}}
