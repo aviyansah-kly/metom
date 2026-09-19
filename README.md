@@ -39,7 +39,7 @@ Edit HTML halaman yang terkait. Gunakan URL asset absolut seperti:
 4. Saat WordPress aktif, record tersebut dipindahkan ke CPT `metom_project`.
 
 ### Tambah artikel
-1. Buat record dari `content/journal/_template.md`.
+1. Buat record dari `content/blog/_template.md`.
 2. Gunakan slug final sejak awal.
 3. Saat WordPress aktif, record tersebut menjadi native WordPress Post.
 
@@ -55,7 +55,7 @@ Edit HTML halaman yang terkait. Gunakan URL asset absolut seperti:
 Public URL dipertahankan agar sama ketika pindah ke WordPress, misalnya:
 
 - `/proyek/al-izzah/`
-- `/jurnal/harga-kitchen-set-malang/`
+- `/blog/harga-kitchen-set-malang/`
 - `/kitchen-set-malang/`
 
 Jangan membuat URL publik baru hanya karena struktur folder repository berubah.
