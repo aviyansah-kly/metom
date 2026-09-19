@@ -105,7 +105,6 @@ jobs:
             --exclude='package.json' \
             --exclude='package-lock.json' \
             --exclude='*.md' \
-            --exclude='*.txt' \
             -czf /tmp/metom-site.tar.gz .
 
       - name: Upload website package
@@ -148,7 +147,7 @@ jobs:
           CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
         run: |
           ssh -i ~/.ssh/metom_deploy -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" \
-            'test -f ~/public_html/metom-static/index.html && test -f ~/public_html/.htaccess && echo "Metom production files are in place."'
+            'test -f ~/public_html/metom-static/index.html && test -f ~/public_html/metom-static/robots.txt && test -f ~/public_html/metom-static/sitemap.xml && test -f ~/public_html/.htaccess && echo "Metom production files are in place."'
 
       - name: Verify public SEO routes
         run: |
