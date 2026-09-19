@@ -218,7 +218,7 @@ add_action('wp_head','metom_social_meta_output',15);
 
 function metom_breadcrumb_schema_output() {
     if (metom_has_seo_plugin() || !is_singular('post')) return;
-    $blog_url=home_url('/jurnal/');
+    $blog_url=home_url('/blog/');
     $data=[
         '@context'=>'https://schema.org',
         '@type'=>'BreadcrumbList',
