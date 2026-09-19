@@ -716,3 +716,81 @@ a.contact-card:hover{background:#fafafa;transform:translateY(-2px)}
 .footer-brand-logo{display:inline-block!important;width:auto!important;margin-bottom:18px!important}
 .footer-brand-logo img{display:block;width:220px!important;height:auto!important;max-height:84px;object-fit:contain!important}
 @media(max-width:720px){.brand-logo{width:92px!important;max-height:32px}.footer-brand-logo img{width:140px!important;max-height:54px}}
+
+/* Responsive header + mobile layout refinement v1 */
+@media(max-width:1100px){
+  .nav-links,.nav-cta{display:none}
+  .mobile-toggle{
+    display:grid;
+    place-items:center;
+    position:relative;
+    width:44px;
+    height:44px;
+    margin-left:auto;
+    padding:0;
+    border:0;
+    background:transparent;
+    font-size:0;
+    cursor:pointer;
+  }
+  .mobile-toggle::before,
+  .mobile-toggle::after{
+    content:"";
+    position:absolute;
+    width:22px;
+    height:2px;
+    background:#151515;
+    border-radius:2px;
+    transition:transform .2s ease,top .2s ease;
+  }
+  .mobile-toggle::before{top:17px;box-shadow:0 5px 0 #151515}
+  .mobile-toggle::after{top:27px}
+  .mobile-open .mobile-toggle::before{top:21px;transform:rotate(45deg);box-shadow:none}
+  .mobile-open .mobile-toggle::after{top:21px;transform:rotate(-45deg)}
+  .mobile-open .nav-links{
+    display:flex;
+    position:absolute;
+    left:0;
+    right:0;
+    top:84px;
+    padding:18px var(--pad) 22px;
+    background:#fff;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    flex-direction:column;
+    align-items:flex-start;
+    gap:0;
+    margin-left:0;
+    max-height:calc(100svh - 84px);
+    overflow:auto;
+    box-shadow:0 16px 28px rgba(0,0,0,.06);
+  }
+  .mobile-open .nav-links a{width:100%;padding:12px 0;font-size:16px}
+}
+@media(max-width:720px){
+  .nav{height:70px}
+  .mobile-open .nav-links{top:70px;max-height:calc(100svh - 70px)}
+  .section-head{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    gap:20px!important;
+  }
+  .section-head>div,
+  .section-head>.h2,
+  .section-head>.copy{width:100%!important;max-width:none!important}
+  .section-head>.btn{
+    justify-self:auto!important;
+    align-self:flex-start!important;
+    width:auto!important;
+    max-width:100%!important;
+    margin-top:2px;
+  }
+  .gallery-head{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    gap:16px!important;
+  }
+  .gallery-head>*{max-width:100%!important}
+}
