@@ -46,9 +46,20 @@ jobs:
           CPANEL_SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "$CPANEL_SSH_KEY" > ~/.ssh/metom_deploy
+          printf '%s\n' "$CPANEL_SSH_KEY" | tr -d '\r' > ~/.ssh/metom_deploy
           chmod 600 ~/.ssh/metom_deploy
+          ssh-keygen -y -f ~/.ssh/metom_deploy > ~/.ssh/metom_deploy.pub
+          echo "Deploy key fingerprint:"
+          ssh-keygen -lf ~/.ssh/metom_deploy.pub
           ssh-keyscan -p "$CPANEL_PORT" "$CPANEL_HOST" >> ~/.ssh/known_hosts
+
+      - name: Test SSH authentication
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          ssh -vvv -o IdentitiesOnly=yes -o BatchMode=yes -i ~/.ssh/metom_deploy -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" 'echo "SSH authentication OK"'
 
       - name: Prepare release on server
         env:
@@ -56,7 +67,7 @@ jobs:
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
         run: |
-          ssh -i ~/.ssh/metom_deploy -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" \
+          ssh -o IdentitiesOnly=yes -i ~/.ssh/metom_deploy -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" \
             'mkdir -p ~/public_html/metom-static ~/metom-backups && if [ -d ~/public_html/metom-static ]; then tar -czf ~/metom-backups/metom-static-$(date +%Y%m%d-%H%M%S).tar.gz -C ~/public_html metom-static 2>/dev/null || true; fi'
 
       - name: Upload website
