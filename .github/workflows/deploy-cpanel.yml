@@ -1,6 +1,9 @@
 name: Deploy Metom to cPanel
 
 on:
+  push:
+    branches:
+      - production
   workflow_dispatch:
     inputs:
       deploy_target:
