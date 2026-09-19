@@ -1,0 +1,99 @@
+name: Deploy Metom to cPanel
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: "Deploy target"
+        required: true
+        default: "production"
+        type: choice
+        options:
+          - production
+
+concurrency:
+  group: metom-cpanel-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy static site to cPanel
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout production branch
+        uses: actions/checkout@v4
+        with:
+          ref: production
+
+      - name: Validate required secrets
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+          CPANEL_SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+        run: |
+          test -n "$CPANEL_HOST" || (echo "Missing CPANEL_HOST" && exit 1)
+          test -n "$CPANEL_USER" || (echo "Missing CPANEL_USER" && exit 1)
+          test -n "$CPANEL_PORT" || (echo "Missing CPANEL_PORT" && exit 1)
+          test -n "$CPANEL_SSH_KEY" || (echo "Missing CPANEL_SSH_KEY" && exit 1)
+
+      - name: Configure SSH
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+          CPANEL_SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$CPANEL_SSH_KEY" > ~/.ssh/metom_deploy
+          chmod 600 ~/.ssh/metom_deploy
+          ssh-keyscan -p "$CPANEL_PORT" "$CPANEL_HOST" >> ~/.ssh/known_hosts
+
+      - name: Prepare release on server
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          ssh -i ~/.ssh/metom_deploy -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" \
+            'mkdir -p ~/public_html/metom-static ~/metom-backups && if [ -d ~/public_html/metom-static ]; then tar -czf ~/metom-backups/metom-static-$(date +%Y%m%d-%H%M%S).tar.gz -C ~/public_html metom-static 2>/dev/null || true; fi'
+
+      - name: Upload website
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          rsync -az --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'deploy/' \
+            --exclude 'node_modules/' \
+            --exclude 'wrangler.jsonc' \
+            --exclude '.assetsignore' \
+            --exclude 'package.json' \
+            --exclude 'package-lock.json' \
+            --exclude '*.md' \
+            --exclude '*.txt' \
+            -e "ssh -i ~/.ssh/metom_deploy -p $CPANEL_PORT" \
+            ./ "$CPANEL_USER@$CPANEL_HOST:~/public_html/metom-static/"
+
+      - name: Install production router
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          scp -i ~/.ssh/metom_deploy -P "$CPANEL_PORT" \
+            deploy/public-root.htaccess \
+            "$CPANEL_USER@$CPANEL_HOST:~/public_html/.htaccess"
+
+      - name: Verify deployed files
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          ssh -i ~/.ssh/metom_deploy -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" \
+            'test -f ~/public_html/metom-static/index.html && test -f ~/public_html/.htaccess && echo "Metom production files are in place."'
