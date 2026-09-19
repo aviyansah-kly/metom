@@ -16,6 +16,10 @@ RewriteRule ^metom-static(?:/(.*))?$ /$1 [R=301,L,NE]
 # This must run before the real-directory bypass because / maps to public_html itself.
 RewriteRule ^$ metom-static/index.html [L]
 
+# Legacy relative asset fallback for clean URLs, e.g. /kitchen-set-malang/assets/detail.css
+RewriteCond %{DOCUMENT_ROOT}/metom-static/assets/$1 -f
+RewriteRule ^.+/assets/(.+)$ metom-static/assets/$1 [L]
+
 # Keep real files/directories that belong to public_html working normally.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
