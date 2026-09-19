@@ -8,6 +8,23 @@ Website lama tidak dipertahankan, sehingga implementasi dianggap sebagai **new b
 
 Prototype HTML di root repository tetap menjadi visual baseline. WordPress hanya mengubahnya menjadi sistem dinamis yang mudah dikelola.
 
+
+## Source content untuk migrasi
+
+Gunakan folder `/content` sebagai sumber data terstruktur ketika memindahkan static site ke WordPress:
+
+- `content/projects/*.md` → CPT `metom_project`
+- `content/journal/*.md` → native WordPress Post
+- `content/projects/_template.md` → template project baru
+- `content/journal/_template.md` → template artikel baru
+
+Public slug harus dipertahankan. Contoh:
+
+- `content/projects/al-izzah.md` → `/proyek/al-izzah/`
+- `content/journal/harga-kitchen-set-malang.md` → `/jurnal/harga-kitchen-set-malang/`
+
+Folder `wordpress/` tidak ikut deployment static cPanel. Folder ini khusus source theme dan handoff CMS.
+
 ## Homepage order
 
 1. Hero
