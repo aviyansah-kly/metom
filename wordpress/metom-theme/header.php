@@ -19,4 +19,3 @@
     <button class="wp-mobile-toggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="wpPrimaryNav"><span></span></button>
   </div>
 </header>
-<main id="main-content">
