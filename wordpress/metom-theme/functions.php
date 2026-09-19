@@ -18,7 +18,7 @@ function metom_assets() {
     wp_enqueue_style('metom-style',get_stylesheet_uri(),[],wp_get_theme()->get('Version'));
     wp_register_script('metom-tracking','',[],null,true);
     wp_enqueue_script('metom-tracking');
-    wp_add_inline_script('metom-tracking',"document.addEventListener('click',function(e){var a=e.target.closest('.js-wa-track');if(!a)return;if(typeof window.gtag==='function'){window.gtag('event','whatsapp_click',{event_category:'lead',link_url:a.href});}});");
+    wp_add_inline_script('metom-tracking',"document.addEventListener('click',function(e){var a=e.target.closest('.js-wa-track');if(a&&typeof window.gtag==='function'){window.gtag('event','whatsapp_click',{event_category:'lead',link_url:a.href});}var t=e.target.closest('.wp-mobile-toggle');if(t){document.body.classList.toggle('wp-mobile-open');t.setAttribute('aria-expanded',document.body.classList.contains('wp-mobile-open')?'true':'false');}if(e.target.closest('.navlinks a')){document.body.classList.remove('wp-mobile-open');var b=document.querySelector('.wp-mobile-toggle');if(b)b.setAttribute('aria-expanded','false');}});");
 }
 add_action('wp_enqueue_scripts','metom_assets');
 
