@@ -4,6 +4,10 @@
 Options -Indexes
 RewriteEngine On
 
+# Permanent redirects from the old journal URLs to the final blog structure.
+RewriteRule ^jurnal/?$ /blog/ [R=301,L]
+RewriteRule ^jurnal/(.+?)/?$ /blog/$1/ [R=301,L,NE]
+
 # Never route cPanel/system or WordPress staging through the static site.
 RewriteRule ^(?:staging|cgi-bin)(?:/|$) - [L]
 
