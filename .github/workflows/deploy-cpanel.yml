@@ -178,6 +178,6 @@ jobs:
           esac
 
           homepage="$(curl -sS "https://metom.id/")"
-          echo "$homepage" | grep -q 'meta name="robots" content="index,follow' || (echo "Homepage index/follow meta missing" && exit 1)
-          echo "$homepage" | grep -q 'rel="canonical" href="https://metom.id/"' || (echo "Homepage canonical missing" && exit 1)
+          [[ "$homepage" == *'meta name="robots" content="index,follow'* ]] || (echo "Homepage index/follow meta missing" && exit 1)
+          [[ "$homepage" == *'rel="canonical" href="https://metom.id/"'* ]] || (echo "Homepage canonical missing" && exit 1)
           echo "Public SEO route verification passed."
