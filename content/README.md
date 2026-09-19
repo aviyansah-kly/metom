@@ -15,7 +15,7 @@ Contoh:
 
 ```
 content/projects/al-izzah.md
-content/journal/harga-kitchen-set-malang.md
+content/blog/harga-kitchen-set-malang.md
 ```
 
 ## Naming asset
