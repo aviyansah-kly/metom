@@ -1,0 +1,44 @@
+# Metom production router
+# Public URLs stay clean while static files live in /public_html/metom-static/
+
+Options -Indexes
+RewriteEngine On
+
+# Never route cPanel/system or WordPress staging through the static site.
+RewriteRule ^(?:staging|cgi-bin)(?:/|$) - [L]
+
+# Prevent /metom-static/ from becoming a second public URL for the same content.
+# Internal rewrites do not match THE_REQUEST, so they continue to work.
+RewriteCond %{THE_REQUEST} \s/+metom-static(?:[/?\s]) [NC]
+RewriteRule ^metom-static(?:/(.*))?$ /$1 [R=301,L,NE]
+
+# Keep real files/directories that belong to public_html working normally.
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Homepage.
+RewriteRule ^$ metom-static/index.html [L]
+
+# Static assets/files with explicit extensions.
+RewriteCond %{DOCUMENT_ROOT}/metom-static/$1 -f
+RewriteRule ^(.+)$ metom-static/$1 [L]
+
+# Clean nested routes, e.g. /proyek/al-izzah/
+RewriteCond %{DOCUMENT_ROOT}/metom-static/$1/index.html -f
+RewriteRule ^(.+?)/?$ metom-static/$1/index.html [L]
+
+# Clean flat routes, e.g. /kitchen-set-malang/
+RewriteCond %{DOCUMENT_ROOT}/metom-static/$1.html -f
+RewriteRule ^(.+?)/?$ metom-static/$1.html [L]
+
+# Custom 404.
+ErrorDocument 404 /404.html
+
+# Basic security headers.
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
