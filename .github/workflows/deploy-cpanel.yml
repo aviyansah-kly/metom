@@ -91,25 +91,43 @@ jobs:
           ssh -o BatchMode=yes -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" \
             'mkdir -p ~/public_html/metom-static ~/metom-backups && if [ -d ~/public_html/metom-static ]; then tar -czf ~/metom-backups/metom-static-$(date +%Y%m%d-%H%M%S).tar.gz -C ~/public_html metom-static 2>/dev/null || true; fi'
 
-      - name: Upload website
+      - name: Package website
+        run: |
+          tar \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='deploy' \
+            --exclude='node_modules' \
+            --exclude='wrangler.jsonc' \
+            --exclude='.assetsignore' \
+            --exclude='package.json' \
+            --exclude='package-lock.json' \
+            --exclude='*.md' \
+            --exclude='*.txt' \
+            -czf /tmp/metom-site.tar.gz .
+
+      - name: Upload website package
         env:
           CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
           CPANEL_USER: ${{ secrets.CPANEL_USER }}
           CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
         run: |
-          rsync -az --delete \
-            --exclude '.git/' \
-            --exclude '.github/' \
-            --exclude 'deploy/' \
-            --exclude 'node_modules/' \
-            --exclude 'wrangler.jsonc' \
-            --exclude '.assetsignore' \
-            --exclude 'package.json' \
-            --exclude 'package-lock.json' \
-            --exclude '*.md' \
-            --exclude '*.txt' \
-            -e "ssh -o BatchMode=yes -p $CPANEL_PORT" \
-            ./ "$CPANEL_USER@$CPANEL_HOST:~/public_html/metom-static/"
+          scp -o BatchMode=yes -P "$CPANEL_PORT" \
+            /tmp/metom-site.tar.gz \
+            "$CPANEL_USER@$CPANEL_HOST:~/metom-site.tar.gz"
+
+      - name: Extract website on server
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          ssh -o BatchMode=yes -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" '
+            set -e
+            rm -rf ~/public_html/metom-static/*
+            tar -xzf ~/metom-site.tar.gz -C ~/public_html/metom-static
+            rm -f ~/metom-site.tar.gz
+          '
 
       - name: Install production router
         env:
