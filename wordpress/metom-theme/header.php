@@ -10,7 +10,7 @@
 <header class="site-header">
   <div class="wrap nav">
     <a class="logo" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php bloginfo('name'); ?>">
-      <?php if (has_custom_logo()) { the_custom_logo(); } else { bloginfo('name'); } ?>
+      <?php if (has_custom_logo()) { the_custom_logo(); } else { ?><img class="metom-brand-logo" src="<?php echo esc_url(get_template_directory_uri() . '/assets/brand/metom_logo.png'); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>"><?php } ?>
     </a>
     <nav aria-label="Navigasi utama">
       <?php wp_nav_menu(['theme_location'=>'primary','container'=>false,'menu_class'=>'navlinks','fallback_cb'=>false]); ?>
