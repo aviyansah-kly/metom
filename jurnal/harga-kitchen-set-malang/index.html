@@ -112,7 +112,7 @@
   document.querySelectorAll('[data-share]').forEach(el=>{
     const type=el.dataset.share;
     if(type==='facebook') el.href='https://www.facebook.com/sharer/sharer.php?u='+encodedUrl;
-    if(type==='x') el.href='https://twitter.com/intent/tweet?url='+encodedUrl+'&text='+encodedTitle;
+    if(type==='x') el.href='https://x.com/intent/post?url='+encodedUrl+'&text='+encodedTitle;
     if(type==='linkedin') el.href='https://www.linkedin.com/sharing/share-offsite/?url='+encodedUrl;
     if(type==='facebook'||type==='x'||type==='linkedin'){el.target='_blank';el.rel='noopener noreferrer';}
     if(type==='copy') el.addEventListener('click',()=>copy(el));
