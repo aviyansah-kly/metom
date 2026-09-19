@@ -12,13 +12,14 @@ RewriteRule ^(?:staging|cgi-bin)(?:/|$) - [L]
 RewriteCond %{THE_REQUEST} \s/+metom-static(?:[/?\s]) [NC]
 RewriteRule ^metom-static(?:/(.*))?$ /$1 [R=301,L,NE]
 
+# Homepage must always use the deployed Metom static site.
+# This must run before the real-directory bypass because / maps to public_html itself.
+RewriteRule ^$ metom-static/index.html [L]
+
 # Keep real files/directories that belong to public_html working normally.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
-
-# Homepage.
-RewriteRule ^$ metom-static/index.html [L]
 
 # Static assets/files with explicit extensions.
 RewriteCond %{DOCUMENT_ROOT}/metom-static/$1 -f
