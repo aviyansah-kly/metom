@@ -3,7 +3,7 @@
 <?php if (have_posts()) : while (have_posts()) : the_post(); ?>
   <article>
     <header class="metom-article__header metom-shell">
-      <p class="metom-kicker">Blog Interior</p>
+      <p class="metom-kicker">Tips Interior</p>
       <h1><?php the_title(); ?></h1>
       <p class="metom-article__meta">Diperbarui <?php echo esc_html(get_the_modified_date('j F Y')); ?> · <?php echo esc_html(get_the_author()); ?></p>
       <?php if (has_excerpt()) : ?><div class="metom-article__lead"><?php the_excerpt(); ?></div><?php endif; ?>
@@ -54,7 +54,8 @@
   document.querySelectorAll('[data-share]').forEach(el=>{
     const type=el.dataset.share;
     if(type==='facebook'){el.href='https://www.facebook.com/sharer/sharer.php?u='+eu;el.target='_blank';el.rel='noopener noreferrer';}
-    if(type==='x'||type==='twitter'){el.href='https://twitter.com/intent/tweet?url='+eu+'&text='+et;el.target='_blank';el.rel='noopener noreferrer';}
+    if(type==='x'){el.href='https://x.com/intent/post?url='+eu+'&text='+et;el.target='_blank';el.rel='noopener noreferrer';}
+    if(type==='linkedin'){el.href='https://www.linkedin.com/sharing/share-offsite/?url='+eu;el.target='_blank';el.rel='noopener noreferrer';}
     if(type==='copy') el.addEventListener('click',()=>copy(el));
     if(type==='instagram') el.addEventListener('click',()=>copy(el,'Link disalin — siap ditempel di Instagram'));
     if(type==='tiktok') el.addEventListener('click',()=>copy(el,'Link disalin — siap ditempel di TikTok'));
