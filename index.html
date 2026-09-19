@@ -197,6 +197,73 @@ footer{padding:48px 0 30px;background:#fff}.footer-grid{display:grid;grid-templa
 .footer-brand-logo{display:inline-block!important;width:auto!important;margin-bottom:18px!important}
 .footer-brand-logo img{display:block;width:220px!important;height:auto!important;max-height:84px;object-fit:contain!important}
 @media(max-width:720px){.brand-logo{width:92px!important;max-height:32px}.footer-brand-logo img{width:140px!important;max-height:54px}}
+
+/* Homepage responsive refinement v1 */
+@media(max-width:1100px){
+  .nav-links,.nav-cta{display:none!important}
+  .mobile-toggle{
+    display:grid!important;
+    place-items:center;
+    position:relative;
+    width:44px;
+    height:44px;
+    margin-left:auto;
+    padding:0;
+    border:0;
+    background:transparent;
+    font-size:0!important;
+    cursor:pointer;
+  }
+  .mobile-toggle::before,
+  .mobile-toggle::after{
+    content:"";
+    position:absolute;
+    width:22px;
+    height:2px;
+    background:#151515;
+    border-radius:2px;
+    transition:transform .2s ease,top .2s ease;
+  }
+  .mobile-toggle::before{top:17px;box-shadow:0 5px 0 #151515}
+  .mobile-toggle::after{top:27px}
+  .mobile-open .mobile-toggle::before{top:21px;transform:rotate(45deg);box-shadow:none}
+  .mobile-open .mobile-toggle::after{top:21px;transform:rotate(-45deg)}
+  .mobile-open .nav-links{
+    display:flex!important;
+    position:absolute;
+    left:0;right:0;top:84px;
+    margin-left:0!important;
+    padding:18px var(--pad) 22px;
+    background:#fff;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    flex-direction:column;
+    align-items:flex-start;
+    gap:0!important;
+    max-height:calc(100svh - 84px);
+    overflow:auto;
+    box-shadow:0 16px 28px rgba(0,0,0,.06);
+  }
+  .mobile-open .nav-links a{width:100%;padding:12px 0;font-size:16px}
+}
+@media(max-width:720px){
+  .mobile-open .nav-links{top:70px;max-height:calc(100svh - 70px)}
+  .projects-head,.room-head,.content-head{
+    flex-direction:column!important;
+    align-items:flex-start!important;
+    gap:18px!important;
+  }
+  .projects-head>div,.room-head>div,.content-head>div{
+    width:100%;
+    max-width:none!important;
+  }
+  .projects-head .text-link,.room-head .text-link,.content-head .text-link,
+  .projects-head .btn,.room-head .btn,.content-head .btn{
+    align-self:flex-start;
+    width:auto!important;
+    max-width:100%;
+  }
+}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"LocalBusiness","name":"Metom Design","url":"https://metom.id/","telephone":"+6281231131796","email":"metomdesign@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Jl. Tenes Meja No. 23, Tasikmadu","addressLocality":"Malang","addressRegion":"Jawa Timur","postalCode":"65142","addressCountry":"ID"},"areaServed":["Malang","Batu","Malang Raya"]}</script></head>
 <body>
