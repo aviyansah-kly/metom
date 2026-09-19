@@ -237,12 +237,12 @@ function metom_share_buttons($position='top') {
     ob_start(); ?>
     <div class="<?php echo esc_attr($class); ?>" aria-label="<?php esc_attr_e('Bagikan artikel','metom'); ?>">
       <span class="metom-share__label"><?php esc_html_e($position==='bottom'?'Bagikan artikel':'Bagikan','metom'); ?></span>
-      <a class="metom-share__icon metom-share__icon--fb" data-share="facebook" href="#" aria-label="Facebook" title="Facebook"><span aria-hidden="true">f</span></a>
-      <a class="metom-share__icon" data-share="x" href="#" aria-label="X" title="X"><span aria-hidden="true">X</span></a>
-      <a class="metom-share__icon" data-share="twitter" href="#" aria-label="Twitter" title="Twitter"><span aria-hidden="true">t</span></a>
-      <button class="metom-share__icon" type="button" data-share="instagram" aria-label="Instagram" title="Instagram"><span aria-hidden="true">◎</span></button>
-      <button class="metom-share__icon" type="button" data-share="tiktok" aria-label="TikTok" title="TikTok"><span aria-hidden="true">♪</span></button>
-      <button class="metom-share__icon" type="button" data-share="copy" aria-label="<?php esc_attr_e('Copy Link','metom'); ?>" title="Copy Link"><span aria-hidden="true">↗</span></button>
+      <a class="metom-share__icon metom-share__icon--facebook" data-share="facebook" href="#" aria-label="Facebook" title="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.6 21v-8h2.8l.4-3.1h-3.2V8c0-.9.3-1.5 1.6-1.5H17V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2H7.5V13h2.8v8h3.3Z"/></svg></a>
+      <a class="metom-share__icon metom-share__icon--x" data-share="x" href="#" aria-label="X" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 4h4.2l3.9 5.2L17 4h2.3l-5.6 6.9L20 20h-4.2l-4.3-5.8L6.7 20H4.4l6-7.5L4.5 4Zm3 1.7H6.9l9.7 12.6h.7L7.5 5.7Z"/></svg></a>
+      <button class="metom-share__icon metom-share__icon--instagram" type="button" data-share="instagram" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 2.8h9A4.7 4.7 0 0 1 21.2 7.5v9a4.7 4.7 0 0 1-4.7 4.7h-9a4.7 4.7 0 0 1-4.7-4.7v-9a4.7 4.7 0 0 1 4.7-4.7Zm4.5 4A5.2 5.2 0 1 0 12 17.2 5.2 5.2 0 0 0 12 6.8Zm0 2A3.2 3.2 0 1 1 8.8 12 3.2 3.2 0 0 1 12 8.8Zm5.5-3.1a1.2 1.2 0 1 0 1.2 1.2 1.2 1.2 0 0 0-1.2-1.2Z"/></svg></button>
+      <button class="metom-share__icon metom-share__icon--tiktok" type="button" data-share="tiktok" aria-label="TikTok" title="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.4 3h3a5.8 5.8 0 0 0 3.6 3.6v3a9.1 9.1 0 0 1-3.6-1v6.6a6.2 6.2 0 1 1-5.4-6.1v3.1a3.2 3.2 0 1 0 2.4 3V3Z"/></svg></button>
+      <a class="metom-share__icon metom-share__icon--linkedin" data-share="linkedin" href="#" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.4 8.2H2.3V21h3.1V8.2ZM3.8 3A1.8 1.8 0 1 0 3.8 6.6 1.8 1.8 0 0 0 3.8 3ZM21.7 13.7c0-3.9-2.1-5.7-4.9-5.7a4.2 4.2 0 0 0-3.8 2.1V8.2H9.9V21H13v-6.3c0-1.7.3-3.3 2.4-3.3s2.1 1.9 2.1 3.4V21h3.1v-7.3Z"/></svg></a>
+      <button class="metom-share__icon metom-share__icon--copy" type="button" data-share="copy" aria-label="<?php esc_attr_e('Copy Link','metom'); ?>" title="Copy Link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.1 1.1"/><path d="M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.1-1.1"/></svg></button>
       <span class="metom-share__status" aria-live="polite"></span>
     </div>
     <?php return ob_get_clean();
