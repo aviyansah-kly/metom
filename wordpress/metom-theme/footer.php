@@ -1,4 +1,3 @@
-</main>
 <footer class="site-footer">
   <div class="wrap footer-grid">
     <div><a class="metom-footer-logo" href="<?php echo esc_url(home_url('/')); ?>" aria-label="<?php bloginfo('name'); ?>"><img src="<?php echo esc_url(get_template_directory_uri() . '/assets/brand/metom_logo.png'); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>"></a><p>Interior Design &amp; Build — Malang, Indonesia.</p></div>
