@@ -97,6 +97,8 @@ jobs:
             --exclude='.git' \
             --exclude='.github' \
             --exclude='deploy' \
+            --exclude='wordpress' \
+            --exclude='content' \
             --exclude='node_modules' \
             --exclude='wrangler.jsonc' \
             --exclude='.assetsignore' \
