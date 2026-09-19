@@ -710,3 +710,9 @@ a.contact-card:hover{background:#fafafa;transform:translateY(-2px)}
   .footer-nap{grid-template-columns:1fr;gap:14px}
   .footer--seo .copyright{margin-top:40px}
 }
+
+/* Official Metom logo */
+.brand-logo{display:block;width:148px!important;height:auto!important;max-height:48px;object-fit:contain!important}
+.footer-brand-logo{display:inline-block!important;width:auto!important;margin-bottom:18px!important}
+.footer-brand-logo img{display:block;width:188px!important;height:auto!important;max-height:76px;object-fit:contain!important}
+@media(max-width:720px){.brand-logo{width:132px!important;max-height:42px}.footer-brand-logo img{width:168px!important}}
