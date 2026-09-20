@@ -49,8 +49,7 @@
     .metom-lead-field input:focus,.metom-lead-field textarea:focus{border-color:#151515}
     .metom-lead-field textarea{min-height:92px;resize:vertical}
     .metom-lead-actions{display:grid;gap:8px;margin-top:18px}
-    .metom-lead-submit{min-height:54px;border:1px solid #151515;background:#151515;color:#fff;font:600 15px Arial,sans-serif;cursor:pointer}
-    .metom-lead-submit[disabled]{opacity:.55;cursor:wait}
+    .metom-lead-submit{min-height:54px;border:1px solid #151515;background:#151515;color:#fff;font:600 15px Arial,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none;padding:0 18px}
     .metom-lead-error{display:none;color:#a52323;font-size:13px;margin-top:8px}
     .metom-lead-error.is-visible{display:block}
     @media(max-width:600px){
@@ -92,7 +91,7 @@
           <textarea id="metomLeadNeed" name="need" placeholder="Contoh: kitchen set rumah di Malang" required maxlength="800"></textarea>
         </div>
         <div class="metom-lead-actions">
-          <button class="metom-lead-submit" type="submit">Lanjut ke WhatsApp</button>
+          <a class="metom-lead-submit" data-metom-wa-submit href="https://wa.me/6281231131796" rel="noopener">Lanjut ke WhatsApp</a>
           <div class="metom-lead-error" role="alert"></div>
         </div>
       </form>
@@ -105,7 +104,7 @@
 
   const form=modal.querySelector('#metomLeadForm');
   const closeBtn=modal.querySelector('.metom-lead-close');
-  const submitBtn=modal.querySelector('.metom-lead-submit');
+  const submitLink=modal.querySelector('.metom-lead-submit');
   const errorEl=modal.querySelector('.metom-lead-error');
   const nameInput=modal.querySelector('#metomLeadName');
 
@@ -143,6 +142,7 @@
     if(!link) return;
     const href=link.href||'';
     if(!/(?:wa\.me|api\.whatsapp\.com|whatsapp\.com)/i.test(href)) return;
+    if(link.hasAttribute('data-metom-wa-submit')) return;
 
     const position=positionOf(link);
     ga('wa_cta_click',{cta_position:position});
@@ -160,27 +160,60 @@
     return new URLSearchParams(location.search).get(name)||'';
   }
 
-  form.addEventListener('submit',async function(e){
+  function getLeadData(){
+    return {
+      name:form.elements.name.value.trim(),
+      phone:form.elements.phone.value.trim(),
+      need:form.elements.need.value.trim()
+    };
+  }
+
+  function isLeadValid(data){
+    return data.name.length>=2 &&
+      data.phone.replace(/\D/g,'').length>=9 &&
+      data.need.length>=5;
+  }
+
+  function buildWhatsAppUrl(data){
+    const msg='Halo Metom Design, saya '+data.name+'. Saya ingin konsultasi mengenai '+data.need+'. Nomor WhatsApp saya '+data.phone+'.';
+    return 'https://wa.me/6281231131796?text='+encodeURIComponent(msg);
+  }
+
+  function updateSubmitHref(){
+    const data=getLeadData();
+    submitLink.href=buildWhatsAppUrl(data);
+  }
+
+  form.addEventListener('input',updateSubmitHref);
+  updateSubmitHref();
+
+  form.addEventListener('submit',function(e){
     e.preventDefault();
+    submitLink.click();
+  });
+
+  submitLink.addEventListener('click',function(e){
     errorEl.classList.remove('is-visible');
 
-    const name=form.elements.name.value.trim();
-    const phone=form.elements.phone.value.trim();
-    const need=form.elements.need.value.trim();
-
-    if(name.length<2||phone.replace(/\D/g,'').length<9||need.length<5){
+    const data=getLeadData();
+    if(!isLeadValid(data)){
+      e.preventDefault();
       errorEl.textContent='Mohon lengkapi nama, nomor WhatsApp, dan kebutuhan Anda.';
       errorEl.classList.add('is-visible');
+
+      if(data.name.length<2) form.elements.name.focus();
+      else if(data.phone.replace(/\D/g,'').length<9) form.elements.phone.focus();
+      else form.elements.need.focus();
       return;
     }
 
-    submitBtn.disabled=true;
-    submitBtn.textContent='Menyimpan...';
+    // Keep the destination as a native WA link before navigation.
+    submitLink.href=buildWhatsAppUrl(data);
 
     const payload=new URLSearchParams({
-      name:name,
-      phone:phone,
-      need:need,
+      name:data.name,
+      phone:data.phone,
+      need:data.need,
       page:location.href,
       path:location.pathname,
       cta_position:ctaPosition,
@@ -191,39 +224,32 @@
       experiment_variant:experimentVariant
     });
 
+    // Tracking must never block the customer's WhatsApp navigation.
+    let beaconSent=false;
     try{
-      fetch(LEAD_ENDPOINT,{
-        method:'POST',
-        mode:'no-cors',
-        headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
-        body:payload.toString(),
-        keepalive:true
-      }).catch(function(){});
+      if(navigator.sendBeacon){
+        beaconSent=navigator.sendBeacon(LEAD_ENDPOINT,payload);
+      }
+    }catch(_){}
 
-      ga('lead_form_submit',{
-        contact_method:'whatsapp',
-        cta_position:ctaPosition
-      });
-
-      const msg='Halo Metom Design, saya '+name+'. Saya ingin konsultasi mengenai '+need+'. Nomor WhatsApp saya '+phone+'.';
-      let wa='https://wa.me/6281231131796?text='+encodeURIComponent(msg);
+    if(!beaconSent){
       try{
-        const original=new URL(targetUrl);
-        const destPhone=original.searchParams.get('phone');
-        if(destPhone) wa='https://wa.me/'+destPhone+'?text='+encodeURIComponent(msg);
+        fetch(LEAD_ENDPOINT,{
+          method:'POST',
+          mode:'no-cors',
+          headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+          body:payload.toString(),
+          keepalive:true
+        }).catch(function(){});
       }catch(_){}
-
-      closeModal();
-      form.reset();
-
-      // Use a normal page navigation instead of window.open().
-      // Mobile Safari/Chrome often blocks window.open() after an async request.
-      window.location.assign(wa);
-    }catch(err){
-      errorEl.textContent='Terjadi kendala. Silakan coba sekali lagi.';
-      errorEl.classList.add('is-visible');
-      submitBtn.disabled=false;
-      submitBtn.textContent='Lanjut ke WhatsApp';
     }
+
+    ga('lead_form_submit',{
+      contact_method:'whatsapp',
+      cta_position:ctaPosition
+    });
+
+    // IMPORTANT: do not preventDefault here.
+    // Safari follows the native <a href="https://wa.me/..."> tap directly.
   });
 })();
