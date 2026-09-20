@@ -1,0 +1,19 @@
+# Metom WordPress staging lock
+# Staging is intentionally non-public until the CMS migration phase resumes.
+# Keep ACME challenge reachable so SSL renewal can continue.
+SetEnvIf Request_URI "^/\.well-known/acme-challenge/" letsencrypt
+
+<IfModule mod_authz_core.c>
+  <RequireAny>
+    Require env letsencrypt
+    Require all denied
+  </RequireAny>
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+  Order deny,allow
+  Deny from all
+  Allow from env=letsencrypt
+</IfModule>
+
+Options -Indexes
