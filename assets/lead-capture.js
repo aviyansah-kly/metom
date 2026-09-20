@@ -9,6 +9,32 @@
   }
   if(!isReady()) return;
 
+  const EXPERIMENT_KEY='metom_wa_flow_v1';
+  let experimentVariant=localStorage.getItem(EXPERIMENT_KEY);
+  if(experimentVariant!=='form'&&experimentVariant!=='direct'){
+    experimentVariant=Math.random()<0.5?'form':'direct';
+    localStorage.setItem(EXPERIMENT_KEY,experimentVariant);
+  }
+
+  function ga(eventName,params){
+    if(typeof window.gtag!=='function') return;
+    window.gtag('event',eventName,Object.assign({
+      experiment_name:'wa_flow_v1',
+      experiment_variant:experimentVariant,
+      page_path:location.pathname,
+      page_title:document.title
+    },params||{}));
+  }
+
+  try{
+    if(sessionStorage.getItem('metom_wa_flow_v1_exposed')!=='1'){
+      ga('experiment_exposure');
+      sessionStorage.setItem('metom_wa_flow_v1_exposed','1');
+    }
+  }catch(_){
+    ga('experiment_exposure');
+  }
+
   const style=document.createElement('style');
   style.textContent=`
     .metom-lead-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,15,15,.52);backdrop-filter:blur(5px)}
@@ -94,6 +120,7 @@
   function openModal(link){
     targetUrl=link.href||targetUrl;
     ctaPosition=positionOf(link);
+    ga('lead_form_open',{cta_position:ctaPosition});
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden','false');
     document.body.style.overflow='hidden';
@@ -116,6 +143,15 @@
     if(!link) return;
     const href=link.href||'';
     if(!/(?:wa\.me|api\.whatsapp\.com|whatsapp\.com)/i.test(href)) return;
+
+    const position=positionOf(link);
+    ga('wa_cta_click',{cta_position:position});
+
+    if(experimentVariant==='direct'){
+      ga('direct_whatsapp_click',{cta_position:position});
+      return;
+    }
+
     e.preventDefault();
     openModal(link);
   },true);
@@ -151,7 +187,8 @@
       utm_source:queryParam('utm_source'),
       utm_medium:queryParam('utm_medium'),
       utm_campaign:queryParam('utm_campaign'),
-      referrer:document.referrer||''
+      referrer:document.referrer||'',
+      experiment_variant:experimentVariant
     });
 
     try{
@@ -163,14 +200,10 @@
         keepalive:true
       });
 
-      if(typeof window.gtag==='function'){
-        window.gtag('event','lead_form_submit',{
-          contact_method:'whatsapp',
-          cta_position:ctaPosition,
-          page_path:location.pathname,
-          page_title:document.title
-        });
-      }
+      ga('lead_form_submit',{
+        contact_method:'whatsapp',
+        cta_position:ctaPosition
+      });
 
       const msg='Halo Metom Design, saya '+name+'. Saya ingin konsultasi mengenai '+need+'. Nomor WhatsApp saya '+phone+'.';
       let wa='https://wa.me/6281231131796?text='+encodeURIComponent(msg);
