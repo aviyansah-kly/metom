@@ -70,7 +70,7 @@
 (function(){
   if(document.querySelector('script[src="/assets/lead-capture.js"]')) return;
   const s=document.createElement('script');
-  s.src='/assets/lead-capture.js?v=20260920-iphone-fix-1';
+  s.src='/assets/lead-capture.js?v=20260920-wa-api-fix-2';
   s.defer=true;
   document.head.appendChild(s);
 })();
