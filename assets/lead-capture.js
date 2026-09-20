@@ -192,13 +192,13 @@
     });
 
     try{
-      await fetch(LEAD_ENDPOINT,{
+      fetch(LEAD_ENDPOINT,{
         method:'POST',
         mode:'no-cors',
         headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
         body:payload.toString(),
         keepalive:true
-      });
+      }).catch(function(){});
 
       ga('lead_form_submit',{
         contact_method:'whatsapp',
@@ -215,11 +215,13 @@
 
       closeModal();
       form.reset();
-      window.open(wa,'_blank','noopener');
+
+      // Use a normal page navigation instead of window.open().
+      // Mobile Safari/Chrome often blocks window.open() after an async request.
+      window.location.assign(wa);
     }catch(err){
-      errorEl.textContent='Data belum berhasil disimpan. Silakan coba sekali lagi.';
+      errorEl.textContent='Terjadi kendala. Silakan coba sekali lagi.';
       errorEl.classList.add('is-visible');
-    }finally{
       submitBtn.disabled=false;
       submitBtn.textContent='Lanjut ke WhatsApp';
     }
