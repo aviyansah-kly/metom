@@ -11,27 +11,33 @@
 
   const style=document.createElement('style');
   style.textContent=`
-    .metom-lead-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(15,15,15,.58);backdrop-filter:blur(6px)}
+    .metom-lead-modal{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,15,15,.52);backdrop-filter:blur(5px)}
     .metom-lead-modal.is-open{display:flex}
-    .metom-lead-dialog{width:min(100%,520px);max-height:calc(100svh - 40px);overflow:auto;background:#fff;color:#151515;padding:30px;border:1px solid #dedede;box-shadow:0 24px 70px rgba(0,0,0,.28)}
-    .metom-lead-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;margin-bottom:24px}
-    .metom-lead-eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#777;margin-bottom:8px}
-    .metom-lead-title{margin:0;font:500 30px/1.05 "Google Sans",Arial,sans-serif;letter-spacing:-.035em}
-    .metom-lead-close{border:0;background:transparent;font-size:28px;line-height:1;cursor:pointer;padding:0;color:#555}
-    .metom-lead-copy{margin:0 0 22px;color:#666;font-size:15px;line-height:1.55}
-    .metom-lead-field{display:grid;gap:7px;margin-bottom:16px}
+    .metom-lead-dialog{width:min(100%,460px);max-height:calc(100svh - 36px);overflow:auto;background:#fff;color:#151515;padding:26px;border:1px solid #dedede;box-shadow:0 20px 60px rgba(0,0,0,.24)}
+    .metom-lead-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:20px}
+    .metom-lead-title{margin:0;font:500 28px/1.08 "Google Sans",Arial,sans-serif;letter-spacing:-.035em}
+    .metom-lead-close{border:0;background:transparent;font-size:28px;line-height:1;cursor:pointer;padding:0 0 8px 8px;color:#555}
+    .metom-lead-field{display:grid;gap:7px;margin-bottom:14px}
     .metom-lead-field label{font-size:13px;font-weight:600}
-    .metom-lead-field input,.metom-lead-field textarea{width:100%;border:1px solid #cfcfcf;background:#fff;color:#151515;padding:13px 14px;font:inherit;outline:none;border-radius:0}
+    .metom-lead-field input,.metom-lead-field textarea{width:100%;border:1px solid #cfcfcf;background:#fff;color:#151515;padding:14px 15px;font:inherit;font-size:16px;outline:none;border-radius:0;min-height:50px}
     .metom-lead-field input:focus,.metom-lead-field textarea:focus{border-color:#151515}
-    .metom-lead-field textarea{min-height:110px;resize:vertical}
-    .metom-lead-hint{font-size:12px;color:#777;margin-top:5px}
-    .metom-lead-actions{display:grid;gap:10px;margin-top:22px}
-    .metom-lead-submit{min-height:52px;border:1px solid #151515;background:#151515;color:#fff;font:600 15px Arial,sans-serif;cursor:pointer}
+    .metom-lead-field textarea{min-height:92px;resize:vertical}
+    .metom-lead-actions{display:grid;gap:8px;margin-top:18px}
+    .metom-lead-submit{min-height:54px;border:1px solid #151515;background:#151515;color:#fff;font:600 15px Arial,sans-serif;cursor:pointer}
     .metom-lead-submit[disabled]{opacity:.55;cursor:wait}
-    .metom-lead-privacy{font-size:11px;line-height:1.5;color:#777;margin:0}
-    .metom-lead-error{display:none;color:#a52323;font-size:13px;margin-top:10px}
+    .metom-lead-error{display:none;color:#a52323;font-size:13px;margin-top:8px}
     .metom-lead-error.is-visible{display:block}
-    @media(max-width:600px){.metom-lead-dialog{padding:24px 20px}.metom-lead-title{font-size:26px}}
+    @media(max-width:600px){
+      .metom-lead-modal{align-items:flex-end;padding:0;background:rgba(15,15,15,.46)}
+      .metom-lead-dialog{width:100%;max-height:92svh;padding:22px 18px 18px;border:0;border-radius:18px 18px 0 0;box-shadow:0 -16px 44px rgba(0,0,0,.18)}
+      .metom-lead-head{margin-bottom:18px}
+      .metom-lead-title{font-size:24px;line-height:1.08;max-width:300px}
+      .metom-lead-field{margin-bottom:12px}
+      .metom-lead-field input,.metom-lead-field textarea{min-height:52px;padding:14px;font-size:16px}
+      .metom-lead-field textarea{min-height:86px}
+      .metom-lead-actions{margin-top:14px}
+      .metom-lead-submit{min-height:54px}
+    }
   `;
   document.head.appendChild(style);
 
@@ -42,12 +48,10 @@
     <div class="metom-lead-dialog" role="dialog" aria-modal="true" aria-labelledby="metomLeadTitle">
       <div class="metom-lead-head">
         <div>
-          <div class="metom-lead-eyebrow">Konsultasi Metom</div>
-          <h2 class="metom-lead-title" id="metomLeadTitle">Ceritakan kebutuhan interior Anda.</h2>
+          <h2 class="metom-lead-title" id="metomLeadTitle">Konsultasi via WhatsApp</h2>
         </div>
         <button class="metom-lead-close" type="button" aria-label="Tutup">×</button>
       </div>
-      <p class="metom-lead-copy">Isi singkat dulu agar tim Metom punya konteks sebelum percakapan WhatsApp dimulai.</p>
       <form id="metomLeadForm">
         <div class="metom-lead-field">
           <label for="metomLeadName">Nama</label>
@@ -56,15 +60,13 @@
         <div class="metom-lead-field">
           <label for="metomLeadPhone">No. WhatsApp</label>
           <input id="metomLeadPhone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx" required maxlength="24">
-          <div class="metom-lead-hint">Nomor ini hanya digunakan untuk menindaklanjuti konsultasi Anda.</div>
         </div>
         <div class="metom-lead-field">
           <label for="metomLeadNeed">Kebutuhan</label>
-          <textarea id="metomLeadNeed" name="need" placeholder="Contoh: kitchen set rumah di Malang, ukuran ruang ±3×4 m" required maxlength="800"></textarea>
+          <textarea id="metomLeadNeed" name="need" placeholder="Contoh: kitchen set rumah di Malang" required maxlength="800"></textarea>
         </div>
         <div class="metom-lead-actions">
           <button class="metom-lead-submit" type="submit">Lanjut ke WhatsApp</button>
-          <p class="metom-lead-privacy">Dengan melanjutkan, Anda menyetujui data yang diisi digunakan Metom untuk menindaklanjuti permintaan konsultasi. Data personal tidak dikirim ke Google Analytics.</p>
           <div class="metom-lead-error" role="alert"></div>
         </div>
       </form>
