@@ -91,7 +91,7 @@
           <textarea id="metomLeadNeed" name="need" placeholder="Contoh: kitchen set rumah di Malang" required maxlength="800"></textarea>
         </div>
         <div class="metom-lead-actions">
-          <a class="metom-lead-submit" data-metom-wa-submit href="https://wa.me/6281231131796" rel="noopener">Lanjut ke WhatsApp</a>
+          <a class="metom-lead-submit" data-metom-wa-submit href="https://api.whatsapp.com/send/?phone=6281231131796&type=phone_number&app_absent=0" rel="noopener">Lanjut ke WhatsApp</a>
           <div class="metom-lead-error" role="alert"></div>
         </div>
       </form>
@@ -176,7 +176,7 @@
 
   function buildWhatsAppUrl(data){
     const msg='Halo Metom Design, saya '+data.name+'. Saya ingin konsultasi mengenai '+data.need+'.';
-    return 'https://wa.me/6281231131796?text='+encodeURIComponent(msg);
+    return 'https://api.whatsapp.com/send/?phone=6281231131796&text='+encodeURIComponent(msg)+'&type=phone_number&app_absent=0';
   }
 
   function updateSubmitHref(){
