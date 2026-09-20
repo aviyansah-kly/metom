@@ -175,7 +175,7 @@
   }
 
   function buildWhatsAppUrl(data){
-    const msg='Halo Metom Design, saya '+data.name+'. Saya ingin konsultasi mengenai '+data.need+'. Nomor WhatsApp saya '+data.phone+'.';
+    const msg='Halo Metom Design, saya '+data.name+'. Saya ingin konsultasi mengenai '+data.need+'.';
     return 'https://wa.me/6281231131796?text='+encodeURIComponent(msg);
   }
 
