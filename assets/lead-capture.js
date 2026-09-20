@@ -78,6 +78,7 @@
         <button class="metom-lead-close" type="button" aria-label="Tutup">×</button>
       </div>
       <form id="metomLeadForm">
+        <input type="text" name="website" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none">
         <div class="metom-lead-field">
           <label for="metomLeadName">Nama</label>
           <input id="metomLeadName" name="name" autocomplete="name" required maxlength="80">
@@ -101,6 +102,7 @@
 
   let targetUrl='https://wa.me/6281231131796';
   let ctaPosition='content';
+  let formStartedAt=0;
 
   const form=modal.querySelector('#metomLeadForm');
   const closeBtn=modal.querySelector('.metom-lead-close');
@@ -119,6 +121,7 @@
   function openModal(link){
     targetUrl=link.href||targetUrl;
     ctaPosition=positionOf(link);
+    formStartedAt=Date.now();
     ga('lead_form_open',{cta_position:ctaPosition});
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden','false');
@@ -221,7 +224,10 @@
       utm_medium:queryParam('utm_medium'),
       utm_campaign:queryParam('utm_campaign'),
       referrer:document.referrer||'',
-      experiment_variant:experimentVariant
+      experiment_variant:experimentVariant,
+      form_token:'metom-lead-v2',
+      started_at:String(formStartedAt||Date.now()),
+      website:form.elements.website ? form.elements.website.value : ''
     });
 
     // Tracking must never block the customer's WhatsApp navigation.
