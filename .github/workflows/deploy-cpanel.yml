@@ -91,6 +91,53 @@ jobs:
           ssh -o BatchMode=yes -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" \
             'mkdir -p ~/public_html/metom-static ~/metom-backups && if [ -d ~/public_html/metom-static ]; then tar -czf ~/metom-backups/metom-static-$(date +%Y%m%d-%H%M%S).tar.gz -C ~/public_html metom-static 2>/dev/null || true; fi'
 
+      - name: Lock WordPress staging
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          scp -o BatchMode=yes -P "$CPANEL_PORT" \
+            deploy/staging-lock.htaccess \
+            "$CPANEL_USER@$CPANEL_HOST:~/staging-lock.htaccess"
+
+          ssh -o BatchMode=yes -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" '
+            set -e
+
+            STAGING_DIR=""
+
+            if command -v uapi >/dev/null 2>&1; then
+              DOCROOT="$(uapi --output=json DomainInfo single_domain_data domain=staging.metom.id 2>/dev/null | python3 -c '"'"'import json,sys; d=json.load(sys.stdin); print((d.get("result",{}).get("data",{}) or {}).get("documentroot",""))'"'"' 2>/dev/null || true)"
+              if [ -n "$DOCROOT" ] && [ -d "$DOCROOT" ]; then
+                STAGING_DIR="$DOCROOT"
+              fi
+            fi
+
+            if [ -z "$STAGING_DIR" ]; then
+              for candidate in "$HOME/public_html/staging" "$HOME/staging.metom.id" "$HOME/public_html/staging.metom.id"; do
+                if [ -d "$candidate" ] && [ -f "$candidate/wp-config.php" ]; then
+                  STAGING_DIR="$candidate"
+                  break
+                fi
+              done
+            fi
+
+            if [ -z "$STAGING_DIR" ]; then
+              echo "Could not resolve staging.metom.id document root."
+              rm -f "$HOME/staging-lock.htaccess"
+              exit 1
+            fi
+
+            mkdir -p "$HOME/metom-backups"
+            if [ -f "$STAGING_DIR/.htaccess" ]; then
+              cp "$STAGING_DIR/.htaccess" "$HOME/metom-backups/staging-htaccess-$(date +%Y%m%d-%H%M%S).bak"
+            fi
+
+            cp "$HOME/staging-lock.htaccess" "$STAGING_DIR/.htaccess"
+            rm -f "$HOME/staging-lock.htaccess"
+            echo "Staging locked at: $STAGING_DIR"
+          '
+
       - name: Package website
         run: |
           tar \
@@ -195,5 +242,9 @@ jobs:
 
           staging_subdomain_code="$(curl -sS -L -o /dev/null -w '%{http_code}' --max-time 15 "https://staging.metom.id/" || true)"
           echo "STAGING_SUBDOMAIN_HTTP=$staging_subdomain_code"
+          case "$staging_subdomain_code" in
+            401|403|404|000|"") ;;
+            *) echo "Expected staging.metom.id to be non-public, got: $staging_subdomain_code"; exit 1 ;;
+          esac
 
           echo "Public SEO + security verification passed."
