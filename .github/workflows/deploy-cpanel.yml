@@ -190,7 +190,10 @@ jobs:
           staging_code="$(curl -sS -o /dev/null -w '%{http_code}' "https://metom.id/staging/")"
           case "$staging_code" in
             401|403|404) ;;
-            *) echo "Expected staging to be non-public (401/403/404), got: $staging_code"; exit 1 ;;
+            *) echo "Expected staging path to be non-public (401/403/404), got: $staging_code"; exit 1 ;;
           esac
+
+          staging_subdomain_code="$(curl -sS -L -o /dev/null -w '%{http_code}' --max-time 15 "https://staging.metom.id/" || true)"
+          echo "STAGING_SUBDOMAIN_HTTP=$staging_subdomain_code"
 
           echo "Public SEO + security verification passed."
