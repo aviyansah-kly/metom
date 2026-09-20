@@ -2,7 +2,7 @@
   'use strict';
 
   // Paste the Google Apps Script Web App /exec URL here after deployment.
-  const LEAD_ENDPOINT='';
+  const LEAD_ENDPOINT='https://script.google.com/macros/s/AKfycbxGHv747pKebB77YhOyFumQENlnWLYwAyES0rvWWfyBVbC0LJx9nBEOM7lNNPSRuWOC/exec';
 
   function isReady(){
     return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/i.test(LEAD_ENDPOINT);
