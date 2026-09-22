@@ -74,3 +74,34 @@
   s.defer=true;
   document.head.appendChild(s);
 })();
+
+
+/* METOM_BRAND_SYNC_20260922 */
+(function(){
+  function syncMetomBrandAssets(){
+    var version='20260922-1';
+
+    document.querySelectorAll('link[rel~="icon"],link[rel="shortcut icon"]').forEach(function(link){
+      link.href='/assets/brand/metom_favicon.png?v='+version;
+      link.type='image/png';
+    });
+
+    if(!document.querySelector('link[rel~="icon"]')){
+      var icon=document.createElement('link');
+      icon.rel='icon';
+      icon.type='image/png';
+      icon.href='/assets/brand/metom_favicon.png?v='+version;
+      document.head.appendChild(icon);
+    }
+
+    document.querySelectorAll('img[src*="/assets/brand/metom_logo.png"],img[src*="assets/brand/metom_logo.png"]').forEach(function(img){
+      img.src='/assets/brand/metom_logo.png?v='+version;
+    });
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',syncMetomBrandAssets,{once:true});
+  }else{
+    syncMetomBrandAssets();
+  }
+})();
