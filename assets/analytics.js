@@ -135,9 +135,9 @@
     }
     @media(max-width:720px){
       .site-header .brand-logo{
-        width:128px!important;
-        max-width:128px!important;
-        max-height:42px!important;
+        width:152px!important;
+        max-width:152px!important;
+        max-height:50px!important;
       }
     }
   `;
