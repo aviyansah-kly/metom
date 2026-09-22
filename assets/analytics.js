@@ -105,3 +105,41 @@
     syncMetomBrandAssets();
   }
 })();
+
+
+/* METOM_GLOBAL_HEADER_BRAND_20260922 */
+(function(){
+  var style=document.createElement('style');
+  style.id='metom-global-header-brand';
+  style.textContent=`
+    .site-header .brand-logo{
+      display:block!important;
+      width:188px!important;
+      height:auto!important;
+      max-width:188px!important;
+      max-height:62px!important;
+      object-fit:contain!important;
+    }
+    .site-header .brand{
+      min-width:245px!important;
+      display:flex!important;
+      align-items:center!important;
+    }
+    @media(max-width:1100px){
+      .site-header .brand-logo{
+        width:154px!important;
+        max-width:154px!important;
+        max-height:50px!important;
+      }
+      .site-header .brand{min-width:0!important}
+    }
+    @media(max-width:720px){
+      .site-header .brand-logo{
+        width:128px!important;
+        max-width:128px!important;
+        max-height:42px!important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+})();
