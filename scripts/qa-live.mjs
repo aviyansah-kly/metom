@@ -31,9 +31,12 @@ async function checkPage(url){
   const canonicals=[...html.matchAll(/<link\b[^>]*rel=["']canonical["'][^>]*>/gi)].map(m=>m[0]);
   const expectedCanonical=canonicals.some(t=>t.includes('href="'+url+'"'));
   const noindex=/<meta\b[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html);
-  const pass=res.status===200 && title && h1===1 && expectedCanonical && !noindex;
-  results.push({url,status:res.status,title,h1,canonical:expectedCanonical,noindex,pass});
-  if(!pass)failures.push('PAGE '+relative+' HTTP '+res.status+' title='+title+' h1='+h1+' canonical='+expectedCanonical+' noindex='+noindex);
+  const expectedWA=html.includes('phone=6281231131796') || html.includes('wa.me/6281231131796');
+  const staticFavicon=html.includes('/assets/brand/metom_favicon.png?v=20260922-1');
+  const newHero=(relative==='/' || relative==='/jasa-desain-interior-malang/') ? html.includes('srcset=') : true;
+  const pass=res.status===200 && title && h1===1 && expectedCanonical && !noindex && expectedWA && staticFavicon && newHero;
+  results.push({url,status:res.status,title,h1,canonical:expectedCanonical,noindex,expectedWA,staticFavicon,newHero,pass});
+  if(!pass)failures.push('PAGE '+relative+' HTTP '+res.status+' title='+title+' h1='+h1+' canonical='+expectedCanonical+' noindex='+noindex+' wa='+expectedWA+' favicon='+staticFavicon+' responsiveHero='+newHero);
 }
 const batches=[];
 for(let i=0;i<urls.length;i+=4)batches.push(urls.slice(i,i+4));
