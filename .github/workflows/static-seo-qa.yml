@@ -1,0 +1,27 @@
+name: Static SEO QA
+on:
+  pull_request:
+    paths:
+      - '**/*.html'
+      - 'sitemap.xml'
+      - 'robots.txt'
+      - 'assets/**'
+      - 'scripts/audit-static-seo.mjs'
+      - '.github/workflows/static-seo-qa.yml'
+  workflow_dispatch:
+jobs:
+  audit:
+    name: Audit 20 indexable pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run static SEO checker
+        run: node scripts/audit-static-seo.mjs
+      - name: Syntax check shared JavaScript
+        run: |
+          node --check assets/detail.js
+          node --check assets/analytics.js
+          node --check assets/lead-capture.js
