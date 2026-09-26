@@ -13,7 +13,7 @@ const urls=[...sitemap.matchAll(/<loc>\s*(https:\/\/metom\.id\/[^<]*)\s*<\/loc>/
 const errors=[],warnings=[],titles=new Map(),descriptions=new Map();
 const assert=(ok,page,message)=>{if(!ok)errors.push(page+': '+message)};
 const tag=(html,name)=>[...html.matchAll(new RegExp('<'+name+'\\b[^>]*>','gi'))].map(x=>x[0]);
-const attr=(html,key)=>{const m=html.match(new RegExp('\\b'+key+'\\s*=\\s*(["\\'])(.*?)\\1','i'));return m?.[2]||''};
+const attr=(html,key)=>{const m=html.match(new RegExp('\\b'+key+'\\s*=\\s*"([^"]*)"','i'));return m?.[1]||''};
 const report=[];
 
 for(const url of urls){
