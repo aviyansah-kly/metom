@@ -4,6 +4,7 @@ on:
     paths:
       - 'scripts/qa-live.mjs'
       - 'scripts/qa-pagespeed.mjs'
+      - 'scripts/qa-mobile.mjs'
       - '.github/workflows/live-qa.yml'
   workflow_dispatch:
 permissions:
@@ -21,3 +22,17 @@ jobs:
       - name: Mobile PageSpeed Insights (informational)
         continue-on-error: true
         run: node scripts/qa-pagespeed.mjs
+  mobile-browser:
+    name: iPhone viewport smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Read-only mobile QA
+        run: node scripts/qa-mobile.mjs
