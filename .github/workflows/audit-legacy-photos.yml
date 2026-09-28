@@ -1,6 +1,9 @@
 name: Audit legacy Metom portfolio photos
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/audit-legacy-photos.yml'
 permissions:
   contents: read
 jobs:
