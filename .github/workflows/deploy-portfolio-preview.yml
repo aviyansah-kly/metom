@@ -1,0 +1,129 @@
+name: Deploy portfolio review preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - portfolio-assets-review
+    paths:
+      - '*.html'
+      - 'proyek/**'
+      - 'assets/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: metom-portfolio-preview
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout review branch
+        uses: actions/checkout@v4
+        with:
+          ref: portfolio-assets-review
+
+      - name: Validate cPanel secrets
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+          CPANEL_SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          CPANEL_SSH_PASSPHRASE: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
+        run: |
+          test -n "$CPANEL_HOST"
+          test -n "$CPANEL_USER"
+          test -n "$CPANEL_PORT"
+          test -n "$CPANEL_SSH_KEY"
+          test -n "$CPANEL_SSH_PASSPHRASE"
+
+      - name: Configure SSH
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+          CPANEL_SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          CPANEL_SSH_PASSPHRASE: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$CPANEL_SSH_KEY" | tr -d '\r' > ~/.ssh/metom_preview
+          chmod 600 ~/.ssh/metom_preview
+          cat > ~/.ssh/askpass.sh <<'EOF'
+          #!/bin/sh
+          printf '%s\n' "$CPANEL_SSH_PASSPHRASE"
+          EOF
+          chmod 700 ~/.ssh/askpass.sh
+          eval "$(ssh-agent -s)"
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+          SSH_ASKPASS="$HOME/.ssh/askpass.sh" SSH_ASKPASS_REQUIRE=force DISPLAY=:0 setsid ssh-add ~/.ssh/metom_preview </dev/null
+          ssh-keyscan -p "$CPANEL_PORT" "$CPANEL_HOST" >> ~/.ssh/known_hosts
+
+      - name: Build isolated preview package
+        run: |
+          set -e
+          rm -rf /tmp/metom-preview
+          mkdir -p /tmp/metom-preview
+          cp -R assets /tmp/metom-preview/
+          cp -R proyek /tmp/metom-preview/
+          cp ./*.html /tmp/metom-preview/ 2>/dev/null || true
+
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path('/tmp/metom-preview')
+          prefix='/metom-portfolio-preview/'
+          for p in root.rglob('*.html'):
+              s=p.read_text(encoding='utf-8')
+              s=s.replace('href="/', f'href="{prefix}')
+              s=s.replace("href='/", f"href='{prefix}")
+              s=s.replace('src="/', f'src="{prefix}')
+              s=s.replace("src='/", f"src='{prefix}")
+              s=s.replace('srcset="/', f'srcset="{prefix}')
+              p.write_text(s,encoding='utf-8')
+
+          # Support clean preview URLs for top-level flat routes.
+          for p in list(root.glob('*.html')):
+              if p.name in ('index.html','404.html'):
+                  continue
+              slug=p.stem
+              d=root/slug
+              d.mkdir(exist_ok=True)
+              (d/'index.html').write_text(p.read_text(encoding='utf-8'),encoding='utf-8')
+
+          # Prevent indexing of the review preview.
+          (root/'.htaccess').write_text("""Options -Indexes
+          <IfModule mod_headers.c>
+            Header set X-Robots-Tag "noindex, nofollow, noarchive"
+          </IfModule>
+          """,encoding='utf-8')
+          PY
+
+          tar -czf /tmp/metom-portfolio-preview.tar.gz -C /tmp/metom-preview .
+
+      - name: Upload preview
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          scp -o BatchMode=yes -P "$CPANEL_PORT" /tmp/metom-portfolio-preview.tar.gz "$CPANEL_USER@$CPANEL_HOST:~/metom-portfolio-preview.tar.gz"
+          ssh -o BatchMode=yes -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" '
+            set -e
+            rm -rf ~/public_html/metom-portfolio-preview
+            mkdir -p ~/public_html/metom-portfolio-preview
+            tar -xzf ~/metom-portfolio-preview.tar.gz -C ~/public_html/metom-portfolio-preview
+            rm -f ~/metom-portfolio-preview.tar.gz
+          '
+
+      - name: Verify preview
+        run: |
+          set -e
+          for url in             "https://metom.id/metom-portfolio-preview/"             "https://metom.id/metom-portfolio-preview/proyek/"             "https://metom.id/metom-portfolio-preview/kitchen-set-malang/"             "https://metom.id/metom-portfolio-preview/custom-furniture-malang/"             "https://metom.id/metom-portfolio-preview/interior-rumah-malang/"             "https://metom.id/metom-portfolio-preview/interior-komersial-malang/"; do
+              code="$(curl -L -sS -o /tmp/preview-response -w '%{http_code}' "$url")"
+              test "$code" = "200" || (echo "Expected 200 for $url, got $code" && exit 1)
+              echo "200 $url"
+          done
+          curl -sSI "https://metom.id/metom-portfolio-preview/" | grep -qi 'x-robots-tag: noindex' || (echo "Preview noindex header missing" && exit 1)
