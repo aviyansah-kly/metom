@@ -212,6 +212,14 @@ jobs:
           assert_200 "https://metom.id/blog/harga-kitchen-set-malang/"
           assert_200 "https://metom.id/sitemap.xml"
           grep -q "https://metom.id/blog/" /tmp/metom-response || (echo "Sitemap does not contain /blog/" && exit 1)
+          grep -q "https://metom.id/galeri/" /tmp/metom-response || (echo "Sitemap does not contain /galeri/" && exit 1)
+
+          assert_200 "https://metom.id/galeri/"
+          gallery="$(cat /tmp/metom-response)"
+          [[ "$gallery" == *'rel="canonical" href="https://metom.id/galeri/"'* ]] || (echo "Gallery canonical missing" && exit 1)
+          [[ "$gallery" == *'meta name="robots" content="index,follow'* ]] || (echo "Gallery index/follow meta missing" && exit 1)
+          [[ "$gallery" == *'class="wa-float"'* ]] || (echo "Gallery WhatsApp CTA missing" && exit 1)
+          [[ "$gallery" == *'id="galleryLightbox"'* ]] || (echo "Gallery lightbox missing" && exit 1)
 
           assert_200 "https://metom.id/robots.txt"
           grep -q "Sitemap: https://metom.id/sitemap.xml" /tmp/metom-response || (echo "robots.txt sitemap directive missing" && exit 1)
