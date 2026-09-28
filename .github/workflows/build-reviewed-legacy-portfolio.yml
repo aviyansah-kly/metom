@@ -7,11 +7,12 @@ on:
       - .github/workflows/build-reviewed-legacy-portfolio.yml
   workflow_dispatch:
 permissions:
+  actions: read
   contents: write
 jobs:
   build-review-branch:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,8 +23,14 @@ jobs:
           python-version: '3.12'
       - name: Install image tools
         run: python -m pip install --disable-pip-version-check Pillow
-      - name: Collect legacy site photos
-        run: python scripts/collect_legacy_photos.py
+      - name: Reuse successful legacy-photo audit artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: metom-legacy-photo-review
+          path: legacy-review
+          github-token: ${{ github.token }}
+          repository: aviyansah-kly/metom
+          run-id: 36374363474
       - name: Keep reviewed project photos and update review pages
         run: python scripts/prepare_legacy_portfolio.py
       - name: Commit generated assets only to review branch
