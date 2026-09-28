@@ -24,9 +24,11 @@ RewriteRule \.(?:bak|conf|config|dist|env|ini|log|sql|sqlite|tar|tgz|gz|zip)$ - 
 RewriteCond %{THE_REQUEST} \s/+metom-static(?:[/?\s]) [NC]
 RewriteRule ^metom-static(?:/(.*))?$ /$1 [R=301,L,NE]
 
-# Homepage must always use the deployed Metom static site.
-# This must run before the real-directory bypass because / maps to public_html itself.
+# Homepage and SEO discovery files must always use the current deployed static release.
+# These rules run before the real-file bypass so stale root files cannot shadow the release.
 RewriteRule ^$ metom-static/index.html [L]
+RewriteRule ^robots\.txt$ metom-static/robots.txt [L]
+RewriteRule ^sitemap\.xml$ metom-static/sitemap.xml [L]
 
 # Legacy relative asset fallback for clean URLs, e.g. /kitchen-set-malang/assets/detail.css
 RewriteCond %{DOCUMENT_ROOT}/metom-static/assets/$1 -f
