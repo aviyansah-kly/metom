@@ -27,8 +27,8 @@ class PageParser(HTMLParser):
                     for entry in a[k].split(","):
                         self.images.append((entry.strip().split(" ")[0], a.get("alt", ""), k))
         if a.get("style"):
-            for image in re.findall(r"url\\(['\\\"]?([^)'\\\"]+)", a["style"]):
-                self.images.append((image, "", "style"))
+            for image in re.findall(r"url\(([^)]+)\)", a["style"]):
+                self.images.append((image.strip().strip(chr(34)).strip(chr(39)), "", "style"))
         if tag == "meta" and a.get("property") in ("og:image", "twitter:image") and a.get("content"):
             self.images.append((a["content"], "", "meta"))
         if tag == "a" and a.get("href"): self.links.append(a["href"])
