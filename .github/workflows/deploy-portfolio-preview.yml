@@ -9,6 +9,7 @@ on:
       - '*.html'
       - 'proyek/**'
       - 'assets/**'
+      - '.github/workflows/deploy-portfolio-preview.yml'
 
 permissions:
   contents: read
