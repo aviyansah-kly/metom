@@ -1,4 +1,5 @@
 name: Static SEO QA
+# Includes /galeri/ in the 21-page production indexability audit.
 on:
   pull_request:
     paths:
