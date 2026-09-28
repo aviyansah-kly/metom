@@ -2,7 +2,7 @@
 /**
  * Metom's dependency-free, build-time technical SEO check.
  * Run: node scripts/audit-static-seo.mjs
- * It checks ONLY the 20 indexable URLs in sitemap.xml; /preview/home-v2 stays untouched.
+ * It checks ONLY the 21 indexable URLs in sitemap.xml; /preview/home-v2 stays untouched.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -54,7 +54,7 @@ for(const url of urls){
  if(offscreen>4)warnings.push(pathname+': '+offscreen+' later images without explicit lazy loading; check LCP vs offscreen rendering manually');
  report.push({page,h1,images:images.length,canonical:canon[0]});
 }
-assert(urls.length===20,'sitemap.xml','Expected 20 production indexable pages; found '+urls.length);
+assert(urls.length===21,'sitemap.xml','Expected 21 production indexable pages; found '+urls.length);
 console.log('METOM STATIC SEO AUDIT');
 console.log('Indexable sitemap URLs: '+urls.length);
 console.log('HTML pages checked: '+report.length);
