@@ -1,0 +1,111 @@
+name: Deploy SEO review preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - seo-daily-2026-09-30
+
+permissions:
+  contents: read
+
+concurrency:
+  group: metom-seo-preview
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout SEO review branch
+        uses: actions/checkout@v4
+        with:
+          ref: seo-daily-2026-09-30
+
+      - name: Validate cPanel secrets
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+          CPANEL_SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          CPANEL_SSH_PASSPHRASE: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
+        run: |
+          test -n "$CPANEL_HOST"; test -n "$CPANEL_USER"; test -n "$CPANEL_PORT"; test -n "$CPANEL_SSH_KEY"; test -n "$CPANEL_SSH_PASSPHRASE"
+
+      - name: Configure SSH
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+          CPANEL_SSH_KEY: ${{ secrets.CPANEL_SSH_KEY }}
+          CPANEL_SSH_PASSPHRASE: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$CPANEL_SSH_KEY" | tr -d '\r' > ~/.ssh/metom_preview
+          chmod 600 ~/.ssh/metom_preview
+          cat > ~/.ssh/askpass.sh <<'EOF'
+          #!/bin/sh
+          printf '%s\n' "$CPANEL_SSH_PASSPHRASE"
+          EOF
+          chmod 700 ~/.ssh/askpass.sh
+          eval "$(ssh-agent -s)"
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+          SSH_ASKPASS="$HOME/.ssh/askpass.sh" SSH_ASKPASS_REQUIRE=force DISPLAY=:0 setsid ssh-add ~/.ssh/metom_preview </dev/null
+          ssh-keyscan -p "$CPANEL_PORT" "$CPANEL_HOST" >> ~/.ssh/known_hosts
+
+      - name: Build isolated SEO preview
+        run: |
+          set -e
+          rm -rf /tmp/metom-seo-preview
+          mkdir -p /tmp/metom-seo-preview
+          cp -R assets /tmp/metom-seo-preview/
+          cp -R blog /tmp/metom-seo-preview/
+          cp -R proyek /tmp/metom-seo-preview/
+          cp ./*.html /tmp/metom-seo-preview/ 2>/dev/null || true
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path('/tmp/metom-seo-preview')
+          prefix='/metom-seo-preview/'
+          for p in root.rglob('*.html'):
+              s=p.read_text(encoding='utf-8')
+              for attr in ('href','src','srcset'):
+                  s=s.replace(f'{attr}="/', f'{attr}="{prefix}')
+                  s=s.replace(f"{attr}='/", f"{attr}='{prefix}")
+              p.write_text(s,encoding='utf-8')
+          for p in list(root.glob('*.html')):
+              if p.name in ('index.html','404.html'): continue
+              d=root/p.stem; d.mkdir(exist_ok=True)
+              (d/'index.html').write_text(p.read_text(encoding='utf-8'),encoding='utf-8')
+          (root/'.htaccess').write_text("""Options -Indexes
+          <IfModule mod_headers.c>
+            Header set X-Robots-Tag "noindex, nofollow, noarchive"
+          </IfModule>
+          """,encoding='utf-8')
+          PY
+          tar -czf /tmp/metom-seo-preview.tar.gz -C /tmp/metom-seo-preview .
+
+      - name: Upload preview
+        env:
+          CPANEL_HOST: ${{ secrets.CPANEL_HOST }}
+          CPANEL_USER: ${{ secrets.CPANEL_USER }}
+          CPANEL_PORT: ${{ secrets.CPANEL_PORT }}
+        run: |
+          scp -o BatchMode=yes -P "$CPANEL_PORT" /tmp/metom-seo-preview.tar.gz "$CPANEL_USER@$CPANEL_HOST:~/metom-seo-preview.tar.gz"
+          ssh -o BatchMode=yes -p "$CPANEL_PORT" "$CPANEL_USER@$CPANEL_HOST" '
+            set -e
+            rm -rf ~/public_html/metom-seo-preview
+            mkdir -p ~/public_html/metom-seo-preview
+            tar -xzf ~/metom-seo-preview.tar.gz -C ~/public_html/metom-seo-preview
+            rm -f ~/metom-seo-preview.tar.gz
+          '
+
+      - name: Verify preview
+        run: |
+          set -e
+          url="https://metom.id/metom-seo-preview/blog/biaya-jasa-desain-interior-malang/"
+          code="$(curl -L -sS -o /tmp/preview-response -w '%{http_code}' "$url")"
+          test "$code" = "200" || (echo "Expected 200, got $code" && exit 1)
+          grep -q "Pertanyaan yang sering muncul sebelum konsultasi" /tmp/preview-response
+          curl -sSI "$url" | grep -qi 'x-robots-tag: noindex' || (echo "Preview noindex header missing" && exit 1)
+          echo "SEO preview verified: $url"
