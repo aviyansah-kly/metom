@@ -5,6 +5,7 @@
   <url><loc>https://metom.id/proyek/</loc></url>
   <url>
     <loc>https://metom.id/galeri/</loc>
+    <lastmod>2026-10-07</lastmod>
     <image:image><image:loc>https://metom.id/assets/legacy-projects/malang-strudel-retail.webp</image:loc></image:image>
     <image:image><image:loc>https://metom.id/assets/legacy-projects/clinic-reception.webp</image:loc></image:image>
     <image:image><image:loc>https://metom.id/assets/legacy-projects/lobby-al-izzah.webp</image:loc></image:image>
@@ -29,5 +30,5 @@
   <url><loc>https://metom.id/blog/desain-dulu-atau-langsung-renovasi/</loc></url>
   <url><loc>https://metom.id/blog/memilih-material-kitchen-set/</loc></url>
   <url><loc>https://metom.id/blog/persiapan-sebelum-konsultasi-interior/</loc></url>
-  <url><loc>https://metom.id/blog/menata-ruang-kerja-fungsional/</loc></url>
+  <url><loc>https://metom.id/blog/menata-ruang-kerja-fungsional/</loc><lastmod>2026-10-07</lastmod></url>
 </urlset>
