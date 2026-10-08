@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://metom.id/</loc></url>
   <url><loc>https://metom.id/jasa-desain-interior-malang/</loc></url>
   <url><loc>https://metom.id/proyek/</loc></url>
-  <url>
-    <loc>https://metom.id/galeri/</loc>
-    <lastmod>2026-10-07</lastmod>
-    <image:image><image:loc>https://metom.id/assets/legacy-projects/malang-strudel-retail.webp</image:loc></image:image>
-    <image:image><image:loc>https://metom.id/assets/legacy-projects/clinic-reception.webp</image:loc></image:image>
-    <image:image><image:loc>https://metom.id/assets/legacy-projects/lobby-al-izzah.webp</image:loc></image:image>
-    <image:image><image:loc>https://metom.id/assets/legacy-projects/lab-iibs-01.webp</image:loc></image:image>
-    <image:image><image:loc>https://metom.id/assets/legacy-projects/residential-pak-joko.webp</image:loc></image:image>
-    <image:image><image:loc>https://metom.id/assets/legacy-projects/kitchen-mas-syaiful.webp</image:loc></image:image>
-    <image:image><image:loc>https://metom.id/assets/legacy-projects/wardrobe-pak-adi.webp</image:loc></image:image>
-  </url>
+  <url><loc>https://metom.id/galeri/</loc></url>
   <url><loc>https://metom.id/proyek/al-izzah/</loc></url>
   <url><loc>https://metom.id/blog/</loc></url>
   <url><loc>https://metom.id/blog/harga-kitchen-set-malang/</loc></url>
@@ -30,5 +20,5 @@
   <url><loc>https://metom.id/blog/desain-dulu-atau-langsung-renovasi/</loc></url>
   <url><loc>https://metom.id/blog/memilih-material-kitchen-set/</loc></url>
   <url><loc>https://metom.id/blog/persiapan-sebelum-konsultasi-interior/</loc></url>
-  <url><loc>https://metom.id/blog/menata-ruang-kerja-fungsional/</loc><lastmod>2026-10-07</lastmod></url>
+  <url><loc>https://metom.id/blog/menata-ruang-kerja-fungsional/</loc></url>
 </urlset>

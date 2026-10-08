@@ -40,7 +40,7 @@
       page_title:document.title
     };
 
-    window.gtag('event','generate_lead',params);
+    // Contact CTA clicks are engagement signals, not verified leads.
     window.gtag('event',method+'_click',params);
   }
 
