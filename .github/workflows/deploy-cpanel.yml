@@ -221,6 +221,25 @@ jobs:
           [[ "$gallery" == *'class="wa-float"'* ]] || (echo "Gallery WhatsApp CTA missing" && exit 1)
           [[ "$gallery" == *'id="galleryLightbox"'* ]] || (echo "Gallery lightbox missing" && exit 1)
 
+          # Release gate: verify the merged SEO content is actually served from cPanel.
+          assert_200 "https://metom.id/kitchen-set-malang/"
+          grep -q "Kitchen Set Malang Custom untuk Dapur Sesuai Kebutuhan" /tmp/metom-response || (echo "New Kitchen Set H1 not live" && exit 1)
+          assert_200 "https://metom.id/interior-rumah-malang/"
+          grep -q "Interior Rumah Malang yang Fungsional" /tmp/metom-response || (echo "New Interior Rumah H1 not live" && exit 1)
+          assert_200 "https://metom.id/custom-furniture-malang/"
+          grep -q "Custom Furniture Malang | Lemari" /tmp/metom-response || (echo "New furniture SEO title not live" && exit 1)
+          assert_200 "https://metom.id/jasa-desain-interior-malang/"
+          grep -q "Jasa Desain Interior Malang untuk Rumah" /tmp/metom-response || (echo "New jasa interior title not live" && exit 1)
+          assert_200 "https://metom.id/sitemap.xml"
+          gallery_image_count="$(grep -o '<image:image>' /tmp/metom-response | wc -l | tr -d ' ')"
+          test "$gallery_image_count" = "17" || (echo "Expected 17 gallery image sitemap entries, got $gallery_image_count" && exit 1)
+          assert_200 "https://metom.id/assets/legacy-projects/kitchen-mas-syaiful.webp"
+          assert_200 "https://metom.id/assets/legacy-projects/malang-strudel-retail.webp"
+          assert_200 "https://metom.id/assets/analytics.js"
+          grep -q "G-TTHXJRKZ49" /tmp/metom-response || (echo "GA4 integration missing from live analytics.js" && exit 1)
+          assert_200 "https://metom.id/assets/lead-capture.js"
+          grep -q "lead_form_submit" /tmp/metom-response || (echo "Lead capture script missing tracking code" && exit 1)
+
           assert_200 "https://metom.id/robots.txt"
           grep -q "Sitemap: https://metom.id/sitemap.xml" /tmp/metom-response || (echo "robots.txt sitemap directive missing" && exit 1)
 
