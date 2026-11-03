@@ -254,6 +254,10 @@ jobs:
           homepage="$(curl -sS "https://metom.id/")"
           [[ "$homepage" == *'meta name="robots" content="index,follow'* ]] || (echo "Homepage index/follow meta missing" && exit 1)
           [[ "$homepage" == *'rel="canonical" href="https://metom.id/"'* ]] || (echo "Homepage canonical missing" && exit 1)
+          [[ "$homepage" == *'"@type":"WebSite"'* ]] || (echo "Official WebSite schema not live" && exit 1)
+          [[ "$homepage" == *'href="/galeri/"'* ]] || (echo "Gallery link missing from live homepage" && exit 1)
+          [[ "$homepage" == *'Profil Metom di Archify'* ]] || (echo "Archify cross-reference not live on homepage" && exit 1)
+
 
           security_headers="$(curl -sSI "https://metom.id/")"
           echo "$security_headers" | grep -Eqi '^strict-transport-security:' || (echo "HSTS header missing" && exit 1)
