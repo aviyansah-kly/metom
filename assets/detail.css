@@ -803,3 +803,11 @@ a.contact-card:hover{background:#fafafa;transform:translateY(-2px)}
 .footer-nap-item:hover .footer-nap-icon svg{stroke:var(--brand)}
 .breadcrumbs a:hover{color:var(--brand)}
 @media(max-width:1100px){.brand{min-width:0}}
+
+/* Six-link navigation: preserve spacing on compact desktop widths. */
+@media (min-width:1101px) and (max-width:1280px){
+  .nav{gap:14px}
+  .brand{min-width:188px}
+  .nav-links{gap:16px;font-size:14px}
+  .nav-cta{padding-left:14px;padding-right:14px;font-size:14px}
+}
