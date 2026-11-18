@@ -40,8 +40,13 @@
       page_title:document.title
     };
 
-    // Contact CTA clicks are engagement signals, not verified leads.
+    // CTA clicks indicate contact intent, NOT confirmed WhatsApp conversations or leads.
     window.gtag('event',method+'_click',params);
+    window.gtag('event','contact_intent',params);
+    if(method==='whatsapp'){
+      // Retain the existing marketing event after retiring the popup experiment.
+      window.gtag('event','wa_cta_click',params);
+    }
   }
 
   document.addEventListener('click',function(event){
@@ -67,13 +72,8 @@
   },{capture:true});
 })();
 
-(function(){
-  if(document.querySelector('script[src="/assets/lead-capture.js"]')) return;
-  const s=document.createElement('script');
-  s.src='/assets/lead-capture.js?v=20260920-security-v3';
-  s.defer=true;
-  document.head.appendChild(s);
-})();
+// 2026-11-18: WhatsApp links open directly; the legacy popup is retired.
+// Analytics events above are recorded without intercepting native link clicks.
 
 
 /* METOM_BRAND_SYNC_20260922 */

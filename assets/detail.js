@@ -1,4 +1,4 @@
-(function(){if(!document.querySelector('script[src="/assets/analytics.js"]')){const s=document.createElement('script');s.src='/assets/analytics.js';s.defer=true;document.head.appendChild(s);}})();
+(function(){if(!document.querySelector('script[src^="/assets/analytics.js"]')){const s=document.createElement('script');s.src='/assets/analytics.js?v=20261118-direct-wa';s.defer=true;document.head.appendChild(s);}})();
 const menuBtn=document.getElementById('menuBtn');
 const closeMobileMenu=()=>{
   document.body.classList.remove('mobile-open');
