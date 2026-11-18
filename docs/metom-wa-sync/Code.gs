@@ -82,7 +82,7 @@ function syncMetomWaAnalytics() {
   }
   for (const row of (waDaily.rows || [])) {
     const key=metomDateFromGa_(row.dimensionValues[0].value);
-    lookup[key]??={users:0,clicks:0,waUsers:0};
+    if (!lookup[key]) lookup[key]={users:0,clicks:0,waUsers:0};
     lookup[key].clicks=Number(row.metricValues[0].value||0);
     lookup[key].waUsers=Number(row.metricValues[1].value||0);
   }
@@ -133,7 +133,9 @@ function metomGetTab_(ss,name){
   return sheet;
 }
 function metomMetric_(response,rowIndex,metricIndex){
-  return Number(response.rows?.[rowIndex]?.metricValues?.[metricIndex]?.value||0);
+  const row=(response && response.rows && response.rows[rowIndex]) || null;
+  const metric=row && row.metricValues && row.metricValues[metricIndex];
+  return Number((metric && metric.value) || 0);
 }
 function metomDateAgo_(days){
   return Utilities.formatDate(
