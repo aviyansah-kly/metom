@@ -40,7 +40,7 @@
       page_title:document.title
     };
 
-    window.gtag('event','generate_lead',params);
+    window.gtag('event','contact_intent',params);
     window.gtag('event',method+'_click',params);
   }
 
