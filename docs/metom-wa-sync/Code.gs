@@ -20,7 +20,7 @@ function setupMetomWaSync() {
     trigger => trigger.getHandlerFunction() === 'syncMetomWaAnalytics'
   );
   if (!existing.length) {
-    ScriptApp.newTrigger('syncMetomWaAnalytics').timeBased().everyDays(1).atHour(10).create();
+    ScriptApp.newTrigger('syncMetomWaAnalytics').timeBased().everyDays(1).atHour(10).inTimezone(METOM_WA_TIMEZONE).create();
   }
   console.log('Metom WhatsApp tracking: sync sukses dan trigger harian aktif.');
 }
