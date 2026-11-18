@@ -138,6 +138,20 @@ jobs:
             echo "Staging locked at: $STAGING_DIR"
           '
 
+      - name: QA direct WhatsApp and GA4 tracking before deploy
+        run: |
+          set -euo pipefail
+          grep -q 'wa_cta_click' assets/analytics.js
+          grep -q 'contact_intent' assets/analytics.js
+          grep -q 'method.*_click' assets/analytics.js
+          ! grep -q 'lead-capture.js' assets/analytics.js
+          ! grep -q 'metom-lead-modal' assets/lead-capture.js
+          ! grep -q 'preventDefault' assets/analytics.js
+          grep -q 'analytics.js?v=20261118-direct-wa' index.html
+          grep -q 'analytics.js?v=20261118-direct-wa' assets/detail.js
+          grep -q 'minta%20estimasi%20kitchen%20set' kitchen-set-malang.html
+          echo "Direct WhatsApp and analytics preflight passed."
+
       - name: Package website
         run: |
           tar \
@@ -277,5 +291,16 @@ jobs:
             401|403|404|000|"") ;;
             *) echo "Expected staging.metom.id to be non-public, got: $staging_subdomain_code"; exit 1 ;;
           esac
+
+          # Confirm the public site serves the new no-popup tracking scripts.
+          live_analytics="$(curl -fsSL 'https://metom.id/assets/analytics.js?v=20261118-direct-wa')"
+          [[ "$live_analytics" == *'wa_cta_click'* ]] || (echo "WhatsApp analytics event missing on live" && exit 1)
+          [[ "$live_analytics" == *'contact_intent'* ]] || (echo "Contact intent event missing on live" && exit 1)
+          [[ "$live_analytics" != *'lead-capture.js'* ]] || (echo "Legacy popup loader still active on live" && exit 1)
+          live_legacy="$(curl -fsSL 'https://metom.id/assets/lead-capture.js?v=20261118-direct-wa')"
+          [[ "$live_legacy" != *'metom-lead-modal'* ]] || (echo "Legacy popup script still active on live" && exit 1)
+          live_kitchen="$(curl -fsSL 'https://metom.id/kitchen-set-malang/')"
+          [[ "$live_kitchen" == *'minta%20estimasi%20kitchen%20set'* ]] || (echo "Kitchen-set prefill not deployed" && exit 1)
+          echo "Direct WhatsApp public-script verification passed."
 
           echo "Public SEO + security verification passed."
