@@ -254,6 +254,13 @@
       contact_method:'whatsapp',
       cta_position:ctaPosition
     });
+    // Count a lead only after a visitor submits a valid consultation form,
+    // not when someone merely clicks a WhatsApp button.
+    ga('generate_lead',{
+      contact_method:'whatsapp',
+      lead_type:'consultation_form',
+      cta_position:ctaPosition
+    });
 
     // IMPORTANT: do not preventDefault here.
     // Safari follows the native <a href="https://wa.me/..."> tap directly.
